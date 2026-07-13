@@ -1,0 +1,7 @@
+<app-navbar></app-navbar>
+
+<router-outlet></router-outlet>
+
+<app-login-modal *ngIf="showLoginModal" (close)="showLoginModal = false"></app-login-modal>
+
+<app-toast></app-toast>

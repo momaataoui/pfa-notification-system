@@ -1,0 +1,65 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/40" (click)="cancel.emit()">
+  <div class="w-90 max-w-[90vw] rounded-lg bg-white p-7 dark:border dark:border-neutral-800 dark:bg-neutral-950" (click)="$event.stopPropagation()">
+    <h2 class="mb-1 text-lg font-semibold text-anthracite dark:text-white">Paiement (simulation)</h2>
+    <p class="mb-5 text-sm text-gray-500 dark:text-neutral-400">
+      Aucune vraie carte n'est traitee. Saisis n'importe quel numero a 16 chiffres.
+    </p>
+
+    <div class="mb-5 rounded-md bg-gray-50 p-4 dark:bg-neutral-900">
+      <p class="text-sm text-gray-500 dark:text-neutral-500">Commande #{{ order.id }}</p>
+      <p class="text-xl font-bold text-anthracite dark:text-white">{{ order.totalAmount }} DH</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" class="flex flex-col gap-4">
+      <label class="text-sm text-gray-600 dark:text-neutral-400">
+        Numero de carte
+        <input
+          type="text"
+          formControlName="cardNumber"
+          maxlength="16"
+          placeholder="4242424242424242"
+          class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+        <span *ngIf="form.controls.cardNumber.invalid && form.controls.cardNumber.touched" class="text-xs text-red-600 dark:text-red-400">
+          16 chiffres requis.
+        </span>
+      </label>
+
+      <div class="flex gap-3">
+        <label class="flex-1 text-sm text-gray-600 dark:text-neutral-400">
+          Expiration (MM/AA)
+          <input
+            type="text"
+            formControlName="expiry"
+            placeholder="12/28"
+            maxlength="5"
+            class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+          <span *ngIf="form.controls.expiry.invalid && form.controls.expiry.touched" class="text-xs text-red-600 dark:text-red-400">
+            Format MM/AA.
+          </span>
+        </label>
+
+        <label class="w-24 text-sm text-gray-600 dark:text-neutral-400">
+          CVV
+          <input
+            type="text"
+            formControlName="cvv"
+            placeholder="123"
+            maxlength="3"
+            class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+          <span *ngIf="form.controls.cvv.invalid && form.controls.cvv.touched" class="text-xs text-red-600 dark:text-red-400">
+            3 chiffres.
+          </span>
+        </label>
+      </div>
+
+      <div class="mt-2 flex justify-end gap-3">
+        <button type="button" (click)="cancel.emit()" [disabled]="processing" class="rounded-md border border-gray-300 px-4 py-2 text-sm text-anthracite hover:bg-gray-50 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
+          Annuler
+        </button>
+        <button type="submit" [disabled]="processing" class="rounded-md bg-rexel px-4 py-2 text-sm font-semibold text-white hover:bg-rexel-dark disabled:opacity-60">
+          {{ processing ? 'Traitement...' : 'Payer ' + order.totalAmount + ' DH' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

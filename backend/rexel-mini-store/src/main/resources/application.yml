@@ -1,0 +1,21 @@
+server:
+  port: 8081
+
+spring:
+  application:
+    name: rexel-mini-store
+
+  datasource:
+    url: jdbc:postgresql://localhost:5433/rexel_store
+    username: pfa
+    password: pfa
+
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    defer-datasource-initialization: true
+
+  sql:
+    init:
+      mode: always

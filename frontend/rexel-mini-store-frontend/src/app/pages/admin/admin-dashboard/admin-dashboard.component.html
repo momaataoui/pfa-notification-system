@@ -1,0 +1,34 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Dashboard</h1>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && stats" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Produits</p>
+    <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.productCount }}</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Commandes</p>
+    <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.orderCount }}</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Clients</p>
+    <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.customerCount }}</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Chiffre d'affaires</p>
+    <p class="mt-1 text-2xl font-bold text-rexel">{{ stats.totalRevenue }} DH</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">En attente</p>
+    <p class="mt-1 text-2xl font-bold text-gray-600 dark:text-neutral-300">{{ stats.pendingCount }}</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Livrees</p>
+    <p class="mt-1 text-2xl font-bold text-green-600">{{ stats.deliveredCount }}</p>
+  </div>
+  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+    <p class="text-sm text-gray-500 dark:text-neutral-400">Annulees</p>
+    <p class="mt-1 text-2xl font-bold text-red-600">{{ stats.cancelledCount }}</p>
+  </div>
+</div>

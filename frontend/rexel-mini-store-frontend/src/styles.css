@@ -1,0 +1,29 @@
+/* You can add global styles to this file, and also import other style files */
+
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-rexel: #0066ff;
+  --color-rexel-dark: #0052cc;
+  --color-anthracite: #333333;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Arial, sans-serif;
+  background-color: #ffffff;
+  color: #333333;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.dark body {
+  background-color: #000000;
+  color: #ffffff;
+}
+

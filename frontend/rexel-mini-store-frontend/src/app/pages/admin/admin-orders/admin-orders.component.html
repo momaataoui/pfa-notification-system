@@ -1,0 +1,55 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold text-anthracite dark:text-white">Commandes</h1>
+
+  <select
+    [(ngModel)]="statusFilter"
+    (ngModelChange)="loadOrders()"
+    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+    <option value="">Tous les statuts</option>
+    <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+  </select>
+</div>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && orders.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+  Aucune commande pour ce filtre.
+</div>
+
+<div *ngIf="!loading && orders.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 dark:border-neutral-800">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-gray-50 text-gray-500 dark:bg-neutral-900 dark:text-neutral-400">
+      <tr>
+        <th class="px-4 py-3">Numero</th>
+        <th class="px-4 py-3">Client</th>
+        <th class="px-4 py-3">Produit</th>
+        <th class="px-4 py-3">Total</th>
+        <th class="px-4 py-3">Statut</th>
+        <th class="px-4 py-3">Changer</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let order of pagedOrders" class="border-t border-gray-100 dark:border-neutral-800">
+        <td class="px-4 py-3 text-anthracite dark:text-white">#{{ order.id }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.customerFirstName }} {{ order.customerLastName }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.product.name }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.totalAmount }} DH</td>
+        <td class="px-4 py-3"><app-status-badge [status]="order.status"></app-status-badge></td>
+        <td class="px-4 py-3">
+          <select
+            [ngModel]="order.status"
+            (ngModelChange)="changeStatus(order, $event)"
+            class="rounded-md border border-gray-300 px-2 py-1 text-xs text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+            <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+          </select>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!loading && totalPages > 1" class="mt-6 flex items-center justify-center gap-2">
+  <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8592;</button>
+  <span class="text-sm text-gray-500 dark:text-neutral-400">Page {{ currentPage }} / {{ totalPages }}</span>
+  <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8594;</button>
+</div>

@@ -1,0 +1,32 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Clients</h1>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && customers.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+  Aucun client pour le moment.
+</div>
+
+<div *ngIf="!loading && customers.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 dark:border-neutral-800">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-gray-50 text-gray-500 dark:bg-neutral-900 dark:text-neutral-400">
+      <tr>
+        <th class="px-4 py-3">Nom</th>
+        <th class="px-4 py-3">Email</th>
+        <th class="px-4 py-3">Telephone</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let customer of pagedCustomers" class="border-t border-gray-100 dark:border-neutral-800">
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.firstName }} {{ customer.lastName }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.email }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.phone }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!loading && totalPages > 1" class="mt-6 flex items-center justify-center gap-2">
+  <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8592;</button>
+  <span class="text-sm text-gray-500 dark:text-neutral-400">Page {{ currentPage }} / {{ totalPages }}</span>
+  <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8594;</button>
+</div>
