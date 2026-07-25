@@ -1,0 +1,194 @@
+:root {
+  --rexel-blue: #0066ff;
+  --rexel-blue-dark: #0052cc;
+  --rexel-anthracite: #333333;
+  --rexel-gray-icon: #98a2b3;
+}
+
+/* ===== Fond =====
+   On force un layout flex-colonne centre : sans ca, le texte de pied de page
+   (ajoute comme frere de .pf-v5-c-login__container) se retrouve a cote de la
+   carte au lieu de dessous, a cause du layout par defaut de PatternFly ici. */
+.pf-v5-c-login {
+  --pf-v5-c-login--BackgroundImage: none;
+  background-color: #f5f7fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+/* PatternFly reserve par defaut 2 colonnes (formulaire + panneau secondaire,
+   qu'on n'utilise pas) via CSS Grid sur le conteneur -> ca decale la carte a
+   gauche. On repasse en une seule colonne centree. */
+.pf-v5-c-login__container {
+  display: flex !important;
+  justify-content: center;
+  padding: 0;
+}
+
+.pf-v5-c-login__main {
+  max-width: 28rem;
+  width: 100%;
+  margin: 0 auto;
+}
+
+/* ===== En-tete : logo + titre + sous-titre, tout centre au-dessus de la carte ===== */
+#kc-header-wrapper {
+  display: none;
+}
+
+.pf-v5-c-login__main-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.rexel-logo-badge {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem;
+  border-radius: 0.75rem;
+  background-color: var(--rexel-blue);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.rexel-header-text {
+  display: block;
+}
+
+.rexel-header-text .pf-v5-c-title {
+  color: var(--rexel-anthracite);
+  text-transform: none;
+  font-weight: 700;
+}
+
+.rexel-subtitle {
+  margin-top: 0.25rem;
+  color: #667085;
+  font-size: 0.95rem;
+}
+
+/* ===== Carte ===== */
+.pf-v5-c-login__main-body,
+.pf-v5-c-login__main-footer {
+  background-color: #ffffff;
+  border-radius: 0.5rem;
+}
+
+.pf-v5-c-login__main-body {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 2rem 2.5rem;
+}
+
+/* ===== Champs avec icone (login + inscription) ===== */
+.pf-v5-c-form-control {
+  border-radius: 0.375rem;
+}
+
+.pf-v5-c-form-control:focus,
+.pf-v5-c-form-control:focus-within {
+  border-color: var(--rexel-blue);
+  box-shadow: 0 0 0 1px var(--rexel-blue);
+}
+
+#username,
+input[name="username"],
+input[name="email"],
+input[name="firstName"],
+input[name="lastName"] {
+  padding-left: 2.25rem;
+  background-repeat: no-repeat;
+  background-position: 0.7rem center;
+  background-size: 1rem;
+}
+
+#password,
+input[name="password"],
+input[name="password-confirm"] {
+  padding-left: 2.25rem;
+  background-repeat: no-repeat;
+  background-position: 0.7rem center;
+  background-size: 1rem;
+}
+
+/* icone enveloppe (mail) : username/email */
+#username,
+input[name="username"],
+input[name="email"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2'%3E%3Cpath d='M3 6l9 6 9-6M4 5h16a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1z'/%3E%3C/svg%3E");
+}
+
+/* icone personne : prenom/nom */
+input[name="firstName"],
+input[name="lastName"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2'%3E%3Ccircle cx='12' cy='8' r='4'/%3E%3Cpath d='M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8'/%3E%3C/svg%3E");
+}
+
+/* icone cadenas : mot de passe */
+#password,
+input[name="password"],
+input[name="password-confirm"] {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398a2b3' stroke-width='2'%3E%3Crect x='4' y='11' width='16' height='9' rx='2'/%3E%3Cpath d='M8 11V7a4 4 0 0 1 8 0v4'/%3E%3C/svg%3E");
+}
+
+/* le bouton oeil (afficher mot de passe) doit rester au-dessus de l'icone cadenas */
+.pf-v5-c-form-password-visibility-button,
+.pf-v5-c-button.pf-m-control {
+  z-index: 1;
+}
+
+/* ===== Ligne "Remember me" / "Forgot password" cote a cote =====
+   La div qui contient #kc-form-options (case a cocher) ET le lien mot de passe
+   oublie n'a pas de classe fiable a cibler dans le theme de base -> :has() */
+.pf-v5-c-form__group:has(> #kc-form-options) {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+#kc-form-options .checkbox label {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ===== Bouton principal ===== */
+.pf-v5-c-button.pf-m-primary {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--rexel-blue);
+}
+
+.pf-v5-c-button.pf-m-primary:hover {
+  --pf-v5-c-button--m-primary--BackgroundColor: var(--rexel-blue-dark);
+}
+
+/* ===== Liens ===== */
+a {
+  color: var(--rexel-blue);
+}
+
+/* ===== Inscription : Prenom / Nom cote a cote =====
+   Les deux champs sont enveloppes dans .rexel-name-row directement par
+   register.ftl (cible fiable, contrairement a :has()/nth-of-type qui
+   matchaient sans jamais s'appliquer visuellement dans ce theme). */
+.rexel-name-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.rexel-name-row .pf-v5-c-form__group {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ===== Pied de page ===== */
+.rexel-footer-note {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 0.8rem;
+  color: #98a2b3;
+}

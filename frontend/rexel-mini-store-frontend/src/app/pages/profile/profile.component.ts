@@ -45,7 +45,7 @@ export class ProfileComponent implements OnInit {
     }
 
     this.saving = true;
-    this.authService.updateProfile(user.id, this.form.getRawValue() as {
+    this.authService.updateProfile(this.form.getRawValue() as {
       firstName: string; lastName: string; email: string; phone: string;
     }).subscribe({
       next: () => {

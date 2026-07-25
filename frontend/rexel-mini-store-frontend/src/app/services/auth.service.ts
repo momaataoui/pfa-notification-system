@@ -1,31 +1,35 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Observable, Subject, tap } from 'rxjs';
-import { LoginRequest, RegisterRequest, StoreUser, UpdateProfileRequest } from '../models/store-user.model';
-
-const STORAGE_KEY = 'rexel-mini-store-user';
+import Keycloak from 'keycloak-js';
+import { BehaviorSubject, Observable, firstValueFrom, tap } from 'rxjs';
+import { StoreUser, UpdateProfileRequest } from '../models/store-user.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
   private readonly apiUrl = 'http://localhost:8081/api';
 
-  private currentUserSubject = new BehaviorSubject<StoreUser | null>(this.readStoredUser());
-  readonly currentUser$ = this.currentUserSubject.asObservable();
+  readonly keycloak = new Keycloak({
+    url: 'http://localhost:8180',
+    realm: 'rexel-realm',
+    clientId: 'rexel-app'
+  });
 
-  private loginModalRequestedSubject = new Subject<void>();
-  readonly loginModalRequested$ = this.loginModalRequestedSubject.asObservable();
+  private currentUserSubject = new BehaviorSubject<StoreUser | null>(null);
+  readonly currentUser$ = this.currentUserSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  private readStoredUser(): StoreUser | null {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+  async init(): Promise<void> {
+    const authenticated = await this.keycloak.init({ onLoad: 'check-sso' });
+    if (authenticated) {
+      await this.loadProfile();
+    }
   }
 
-  private persist(user: StoreUser): void {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(user));
-    this.currentUserSubject.next(user);
+  private async loadProfile(): Promise<void> {
+    const profile = await firstValueFrom(this.http.get<StoreUser>(`${this.apiUrl}/users/me`));
+    this.currentUserSubject.next(profile);
   }
 
   get currentUser(): StoreUser | null {
@@ -33,7 +37,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return this.currentUserSubject.value !== null;
+    return !!this.keycloak.authenticated;
   }
 
   isAdmin(): boolean {
@@ -41,27 +45,21 @@ export class AuthService {
   }
 
   requestLogin(): void {
-    this.loginModalRequestedSubject.next();
+    this.keycloak.login({ redirectUri: window.location.href });
   }
 
-  login(request: LoginRequest): Observable<StoreUser> {
-    return this.http.post<StoreUser>(`${this.apiUrl}/auth/login`, request).pipe(
-      tap(user => this.persist(user))
-    );
+  register(): void {
+    this.keycloak.register({ redirectUri: window.location.href });
   }
 
-  register(request: RegisterRequest): Observable<StoreUser> {
-    return this.http.post<StoreUser>(`${this.apiUrl}/auth/register`, request);
-  }
-
-  updateProfile(id: number, request: UpdateProfileRequest): Observable<StoreUser> {
-    return this.http.put<StoreUser>(`${this.apiUrl}/users/${id}`, request).pipe(
-      tap(user => this.persist(user))
+  updateProfile(request: UpdateProfileRequest): Observable<StoreUser> {
+    return this.http.put<StoreUser>(`${this.apiUrl}/users/me`, request).pipe(
+      tap(user => this.currentUserSubject.next(user))
     );
   }
 
   logout(): void {
-    localStorage.removeItem(STORAGE_KEY);
     this.currentUserSubject.next(null);
+    this.keycloak.logout({ redirectUri: window.location.origin });
   }
 }

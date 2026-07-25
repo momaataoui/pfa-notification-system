@@ -54,6 +54,25 @@ services:
       timeout: 5s
       retries: 5
 
+  keycloak:
+    image: quay.io/keycloak/keycloak:25.0
+    container_name: pfa-keycloak
+    command: start-dev
+    ports:
+      - "8180:8080"
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: pfa
+      KC_DB_PASSWORD: pfa
+    volumes:
+      - ./keycloak-theme/rexel-theme:/opt/keycloak/themes/rexel-theme
+    depends_on:
+      postgres:
+        condition: service_healthy
+
 volumes:
   kafka-data:
   postgres-data:

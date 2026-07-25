@@ -25,6 +25,7 @@ public class OrderService {
 
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
+    private final KafkaEventPublisher kafkaEventPublisher;
 
     @Transactional
     public Order placeOrder(OrderRequest request) {
@@ -48,7 +49,25 @@ public class OrderService {
         order.setStatus(OrderStatus.PENDING);
         order.setCreatedAt(LocalDateTime.now());
 
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        kafkaEventPublisher.publish(
+                saved.getCustomerEmail(),
+                "Commande #" + saved.getId() + " enregistree pour " + product.getName(),
+                "ORDER_CREATED",
+                "normal"
+        );
+
+        if (product.getStockQuantity() < 10) {
+            kafkaEventPublisher.publish(
+                    "admin@rexel.com",
+                    "Stock faible pour " + product.getName() + " : " + product.getStockQuantity() + " unites restantes",
+                    "LOW_STOCK_ALERT",
+                    "high"
+            );
+        }
+
+        return saved;
     }
 
     public List<Order> getOrdersForCustomer(String email) {
@@ -72,7 +91,9 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.CANCELLED);
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+        kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " annulee", "ORDER_CANCELLED", "normal");
+        return saved;
     }
 
     @Transactional
@@ -85,7 +106,9 @@ public class OrderService {
         }
 
         order.setStatus(OrderStatus.PAID);
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+        kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " payee", "ORDER_PAID", "normal");
+        return saved;
     }
 
     @Transactional
@@ -94,6 +117,19 @@ public class OrderService {
                 .orElseThrow(() -> new OrderNotFoundException(orderId));
 
         order.setStatus(status);
-        return orderRepository.save(order);
+        Order saved = orderRepository.save(order);
+
+        String eventType = switch (status) {
+            case SHIPPED -> "ORDER_SHIPPED";
+            case DELIVERED -> "ORDER_DELIVERED";
+            case CANCELLED -> "ORDER_CANCELLED";
+            default -> null;
+        };
+
+        if (eventType != null) {
+            kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " : " + eventType, eventType, "normal");
+        }
+
+        return saved;
     }
 }

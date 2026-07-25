@@ -5,6 +5,12 @@ spring:
   application:
     name: rexel-mini-store
 
+  kafka:
+    bootstrap-servers: localhost:9092
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+
   datasource:
     url: jdbc:postgresql://localhost:5433/rexel_store
     username: pfa
@@ -19,3 +25,16 @@ spring:
   sql:
     init:
       mode: always
+
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:8180/realms/rexel-realm
+
+app:
+  keycloak:
+    server-url: http://localhost:8180
+    realm: rexel-realm
+    admin-client-id: rexel-mini-store-service
+    admin-client-secret: ${KEYCLOAK_ADMIN_CLIENT_SECRET:rexel-mini-store-service-secret-local-dev}

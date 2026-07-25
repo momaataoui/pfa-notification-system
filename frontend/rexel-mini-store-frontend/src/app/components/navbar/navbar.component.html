@@ -68,9 +68,12 @@
     </ng-container>
 
     <ng-template #loggedOut>
-      <a routerLink="/register" class="hidden text-sm font-medium text-anthracite hover:text-rexel dark:text-white sm:inline">
+      <button
+        type="button"
+        (click)="authService.register()"
+        class="hidden text-sm font-medium text-anthracite hover:text-rexel dark:text-white sm:inline">
         Inscription
-      </a>
+      </button>
       <button
         type="button"
         (click)="authService.requestLogin()"

@@ -7,8 +7,3 @@ INSERT INTO product (name, description, price, original_price, stock_quantity, i
 ('Ampoule LED GU10 5W', 'Spot LED culot GU10, 5W, blanc neutre', 18.50, 24.90, 4, '/products-photos/ampoule-gu10.jpg', 'Lighting', 4.4, 145, NULL, NULL, NULL, NULL),
 ('Boitier de derivation etanche', 'Boitier IP65 pour raccordement exterieur', 12.75, NULL, 60, '/products-photos/boitier-etanche.jpg', 'Boxes', 4.2, 78, NULL, NULL, NULL, NULL),
 ('Interrupteur differentiel 30mA', 'Interrupteur differentiel type AC, 40A, 30mA', 89.00, NULL, 15, '/products-photos/interrupteur-differentiel.jpg', 'Switches', 4.6, 54, '240V', '40A', 'Type AC', 'UL');
-
-INSERT INTO store_users (first_name, last_name, email, phone, password, role) VALUES
-('Admin', 'Rexel', 'admin@rexel.com', '0600000000', 'admin123', 'ADMIN'),
-('Mohammed', 'Rexel', 'mohammed@rexel.com', '0611111111', 'password123', 'USER'),
-('Sara', 'Rexel', 'sara@rexel.com', '0622222222', 'password123', 'USER');

@@ -1,25 +1,12 @@
 export type StoreRole = 'ADMIN' | 'USER';
 
 export interface StoreUser {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phone: string | null;
   role: StoreRole;
-}
-
-export interface LoginRequest {
-  email: string;
-  password: string;
-}
-
-export interface RegisterRequest {
-  firstName: string;
-  lastName: string;
-  email: string;
-  phone: string;
-  password: string;
 }
 
 export interface UpdateProfileRequest {
