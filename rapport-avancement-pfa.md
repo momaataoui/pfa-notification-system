@@ -1,6 +1,6 @@
 # Rapport d'avancement — PFA Système de Notification Multi-Canal
 
-*Dernière mise à jour : 2026-07-22*
+*Dernière mise à jour : 2026-07-23*
 
 ---
 
@@ -201,12 +201,28 @@ Fichier de configuration Spring Boot. Chaque bloc correspond à une brique techn
 
 **Piège évité** : sans `defer-datasource-initialization` + `sql.init.mode: always`, le futur `data.sql` échouerait silencieusement ou ne s'exécuterait jamais — ce sont deux réglages "invisibles" mais indispensables.
 
-#### ⏳ Reste de la Phase 1
-- Entités `Notification`, `RecipientType`, `Channel`, `Priority` (enums) — **pas d'entité `User`**
-- `data.sql` : rien à y mettre pour l'instant (aucune table de comptes dans ce service)
+#### ✅ Phase 5 — Voie manuelle admin (terminée le 2026-07-23)
 
-#### ⏳ Phase 0 (nouvelle) et Phases 2 à 11
-Voir `cahier-des-charges-notification-service.md` pour le détail complet.
+Permet à un ADMIN de créer une notification à la main (formulaire : destinataire, priorité, canaux, titre, message), sans passer par Kafka.
+
+- `AdminNotificationCreateRequest` (DTO) : `recipientType` (`USER`/`BROADCAST` — `GROUP` volontairement retiré du choix, aucune notion de groupe n'existe dans le système), `recipientEmail` (si `USER`), `priority`, `channels`, `title`, `message`
+- `NotificationService.createManual(request)` : même principe que `createFromEvent`, sauf que les canaux sont **choisis par l'admin** au lieu d'être décidés par `ChannelDecisionService`, et `sourceEventType` reste `null` (distingue "manuel" de "automatique")
+- `AdminNotificationController` (`POST /api/admin/notifications`) : sécurité déjà couverte par la règle existante `/api/admin/**` → `ADMIN`
+
+#### ✅ Phase 6 — Canal Push, backend + mini client frontend (terminée le 2026-07-23, testée de bout en bout)
+
+**Défi technique** : un WebSocket est une connexion permanente, pas une requête HTTP classique — `oauth2ResourceServer().jwt()` (Phase 2) ne s'applique pas automatiquement dessus. Il a fallu valider le JWT manuellement à la connexion :
+
+- `StompAuthInterceptor` : intercepte la trame STOMP `CONNECT`, lit le token dans l'en-tête `Authorization`, le valide via `JwtDecoder` (déjà fourni par Spring depuis la Phase 2), et associe l'email de l'utilisateur à cette connexion (`accessor.setUser(...)`)
+- `WebSocketConfig` : déclare le endpoint `/ws`, active les destinations `/topic` (diffusion) et `/queue` (ciblé), branche l'intercepteur
+- `PushNotificationSender` : `convertAndSendToUser(email, "/queue/notifications", ...)` pour un `USER`, `convertAndSend("/topic/notifications", ...)` pour un `BROADCAST`
+- `NotificationService` : après sauvegarde, si `PUSH` fait partie des canaux, appelle `PushNotificationSender` (dans `createFromEvent` **et** `createManual`)
+
+**Piège rencontré** : la poignée de main WebSocket échouait avec `HTTP Authentication failed` — `SecurityConfig` bloquait la requête HTTP initiale d'ouverture de connexion (avant même que `StompAuthInterceptor` n'entre en jeu). **Fix** : `.requestMatchers("/ws/**").permitAll()` ajouté avant la règle générale — l'authentification réelle reste assurée par l'intercepteur STOMP, à un niveau différent.
+
+**Mini client frontend** (avant la vraie Phase 10, juste pour valider visuellement) : `@stomp/stompjs` installé dans `rexel-mini-store-frontend`, `PushNotificationService` (Angular) se connecte au WebSocket avec le token Keycloak dès qu'un utilisateur est connecté, s'abonne à `/user/queue/notifications` et `/topic/notifications`, affiche chaque notification reçue via le `ToastService` existant.
+
+**Test de bout en bout réussi** (Playwright) : connexion en tant que `john` → commande passée → toast `"✓ ORDER_CREATED : Commande #3 enregistree pour Disjoncteur 16A courbe C"` apparaît **en direct, sans rechargement de page**, quelques centaines de millisecondes après la commande.
 
 ### 1.5 Documentation
 
@@ -411,8 +427,8 @@ Résumé des phases (plan désormais suivi uniquement dans ce rapport, voir 1.5)
 | 3 | ✅ Ingestion Kafka | Terminée, reconstruite et retestée de bout en bout le 2026-07-22 (voir 1.4) |
 | 4 | ✅ Persistence & consultation | Terminée et testée de bout en bout le 2026-07-22 (`NotificationRepository`/`Service`/`Controller`, voir 1.4) |
 | 4bis | ✅ Producer Kafka `rexel-mini-store` | Recablé et testé de bout en bout le 2026-07-22 (voir 1.4) |
-| 5 | ⏳ Voie manuelle admin | `POST /api/admin/notifications` |
-| 6 | ⏳ Canal Push | WebSocket/STOMP, `PushNotificationSender` |
+| 5 | ✅ Voie manuelle admin | Terminée le 2026-07-23 (`POST /api/admin/notifications`, voir 1.4) |
+| 6 | ✅ Canal Push | Terminée et testée de bout en bout le 2026-07-23 (WebSocket/STOMP + mini client frontend, voir 1.4) |
 | 7 | ⏳ Canal Email | Gmail SMTP, `EmailNotificationSender` |
 | 8 | ⏳ Canal SMS | Simulation (log + historique) |
 | 9 | ⏳ Historique admin | `GET /api/admin/notifications` filtrable |

@@ -97,21 +97,6 @@ public class OrderService {
     }
 
     @Transactional
-    public Order payOrder(Long orderId) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new OrderNotFoundException(orderId));
-
-        if (order.getStatus() != OrderStatus.PENDING) {
-            throw new InvalidOrderStatusException("Seules les commandes en attente peuvent etre payees");
-        }
-
-        order.setStatus(OrderStatus.PAID);
-        Order saved = orderRepository.save(order);
-        kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " payee", "ORDER_PAID", "normal");
-        return saved;
-    }
-
-    @Transactional
     public Order updateStatus(Long orderId, OrderStatus status) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new OrderNotFoundException(orderId));

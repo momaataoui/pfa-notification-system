@@ -1,0 +1,75 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Envoyer une notification</h1>
+
+<form [formGroup]="form" (ngSubmit)="submit()" class="flex max-w-xl flex-col gap-4">
+
+  <label class="text-sm text-gray-600 dark:text-neutral-400">
+    Destinataire
+    <select
+      formControlName="recipientType"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+      <option *ngFor="let type of recipientTypes" [value]="type">{{ type }}</option>
+    </select>
+  </label>
+
+  <label *ngIf="isUserRecipient" class="text-sm text-gray-600 dark:text-neutral-400">
+    Email du destinataire
+    <input
+      type="email"
+      formControlName="recipientEmail"
+      placeholder="client@rexel.com"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+    <span *ngIf="form.controls.recipientEmail.invalid && form.controls.recipientEmail.touched" class="text-xs text-red-600 dark:text-red-400">
+      Email valide requis.
+    </span>
+  </label>
+
+  <label class="text-sm text-gray-600 dark:text-neutral-400">
+    Priorite
+    <select
+      formControlName="priority"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+      <option *ngFor="let priority of priorities" [value]="priority">{{ priority }}</option>
+    </select>
+  </label>
+
+  <div [formGroup]="form.controls.channels">
+    <p class="mb-1 text-sm text-gray-600 dark:text-neutral-400">Canaux</p>
+    <div class="flex gap-4">
+      <label *ngFor="let channel of channels" class="flex items-center gap-2 text-sm text-anthracite dark:text-white">
+        <input type="checkbox" [formControlName]="channel" class="accent-rexel" />
+        {{ channel }}
+      </label>
+    </div>
+  </div>
+
+  <label class="text-sm text-gray-600 dark:text-neutral-400">
+    Titre
+    <input
+      type="text"
+      formControlName="title"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+    <span *ngIf="form.controls.title.invalid && form.controls.title.touched" class="text-xs text-red-600 dark:text-red-400">
+      Titre requis.
+    </span>
+  </label>
+
+  <label class="text-sm text-gray-600 dark:text-neutral-400">
+    Message
+    <textarea
+      formControlName="message"
+      rows="4"
+      class="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"></textarea>
+    <span *ngIf="form.controls.message.invalid && form.controls.message.touched" class="text-xs text-red-600 dark:text-red-400">
+      Message requis.
+    </span>
+  </label>
+
+  <div class="mt-2">
+    <button
+      type="submit"
+      [disabled]="sending"
+      class="rounded-md bg-rexel px-4 py-2 text-sm font-semibold text-white hover:bg-rexel-dark disabled:opacity-60">
+      {{ sending ? 'Envoi...' : 'Envoyer' }}
+    </button>
+  </div>
+</form>

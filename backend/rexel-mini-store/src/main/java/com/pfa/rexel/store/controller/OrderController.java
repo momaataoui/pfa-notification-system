@@ -45,8 +45,4 @@ public class OrderController {
         return OrderMapper.toDto(orderService.cancelOrder(id));
     }
 
-    @PatchMapping("/{id}/pay")
-    public OrderResponse payOrder(@PathVariable Long id) {
-        return OrderMapper.toDto(orderService.payOrder(id));
-    }
 }

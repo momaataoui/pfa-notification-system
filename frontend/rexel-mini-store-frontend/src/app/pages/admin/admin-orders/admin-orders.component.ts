@@ -22,7 +22,7 @@ export class AdminOrdersComponent implements OnInit {
   currentPage = 1;
   statusFilter: OrderStatus | '' = '';
 
-  readonly statuses: OrderStatus[] = ['PENDING', 'PAID', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
+  readonly statuses: OrderStatus[] = ['PENDING', 'SHIPPED', 'DELIVERED', 'CANCELLED'];
 
   constructor(
     private adminService: AdminService,

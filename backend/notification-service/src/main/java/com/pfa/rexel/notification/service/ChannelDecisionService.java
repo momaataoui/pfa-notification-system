@@ -10,7 +10,7 @@ public class ChannelDecisionService {
 
     public Set<Channel> decideChannels(String type, String urgency) {
         return switch (type) {
-            case "ORDER_CREATED", "ORDER_PAID", "ORDER_SHIPPED", "ORDER_DELIVERED",
+            case "ORDER_CREATED", "ORDER_SHIPPED", "ORDER_DELIVERED",
                  "PRODUCT_REQUEST_CREATED", "PRODUCT_REQUEST_APPROVED", "PRODUCT_REQUEST_REJECTED" ->
                     Set.of(Channel.PUSH, Channel.EMAIL);
             case "ORDER_CANCELLED" -> Set.of(Channel.PUSH);

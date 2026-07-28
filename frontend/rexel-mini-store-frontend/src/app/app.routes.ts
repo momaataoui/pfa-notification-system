@@ -9,15 +9,17 @@ import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-das
 import { AdminProductsComponent } from './pages/admin/admin-products/admin-products.component';
 import { AdminOrdersComponent } from './pages/admin/admin-orders/admin-orders.component';
 import { AdminCustomersComponent } from './pages/admin/admin-customers/admin-customers.component';
+import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
 import { authGuard } from './guards/auth.guard';
 import { adminGuard } from './guards/admin.guard';
+import { notAdminGuard } from './guards/not-admin.guard';
 
 export const routes: Routes = [
-  { path: '', component: HomeComponent },
-  { path: 'products', component: ProductsComponent },
-  { path: 'products/:id', component: ProductDetailComponent },
+  { path: '', component: HomeComponent, canActivate: [notAdminGuard] },
+  { path: 'products', component: ProductsComponent, canActivate: [notAdminGuard] },
+  { path: 'products/:id', component: ProductDetailComponent, canActivate: [notAdminGuard] },
   { path: 'profile', component: ProfileComponent, canActivate: [authGuard] },
-  { path: 'my-orders', component: MyOrdersComponent, canActivate: [authGuard] },
+  { path: 'my-orders', component: MyOrdersComponent, canActivate: [authGuard, notAdminGuard] },
   {
     path: 'admin',
     component: AdminLayoutComponent,
@@ -27,7 +29,8 @@ export const routes: Routes = [
       { path: 'dashboard', component: AdminDashboardComponent },
       { path: 'products', component: AdminProductsComponent },
       { path: 'orders', component: AdminOrdersComponent },
-      { path: 'customers', component: AdminCustomersComponent }
+      { path: 'customers', component: AdminCustomersComponent },
+      { path: 'notifications', component: AdminNotificationsComponent }
     ]
   },
   { path: '**', redirectTo: '' }

@@ -4,6 +4,8 @@ import { RouterOutlet } from '@angular/router';
 import { ToastComponent } from './components/toast/toast.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ThemeService } from './services/theme.service';
+import { AuthService } from './services/auth.service';
+import { PushNotificationService } from './services/push-notification.service';
 
 @Component({
   selector: 'app-root',
@@ -13,5 +15,17 @@ import { ThemeService } from './services/theme.service';
 })
 export class AppComponent {
 
-  constructor(private themeService: ThemeService) {}
+  constructor(
+    private themeService: ThemeService,
+    private authService: AuthService,
+    private pushNotificationService: PushNotificationService
+  ) {
+    this.authService.currentUser$.subscribe(user => {
+      if (user) {
+        this.pushNotificationService.connect();
+      } else {
+        this.pushNotificationService.disconnect();
+      }
+    });
+  }
 }

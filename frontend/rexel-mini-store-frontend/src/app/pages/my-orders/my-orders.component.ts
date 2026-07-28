@@ -7,14 +7,13 @@ import { ToastService } from '../../services/toast.service';
 import { StatusBadgeComponent } from '../../components/status-badge/status-badge.component';
 import { SpinnerComponent } from '../../components/spinner/spinner.component';
 import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
-import { PaymentModalComponent } from '../../components/payment-modal/payment-modal.component';
 
 const PAGE_SIZE = 5;
 
 @Component({
   selector: 'app-my-orders',
   standalone: true,
-  imports: [CommonModule, StatusBadgeComponent, SpinnerComponent, ConfirmDialogComponent, PaymentModalComponent],
+  imports: [CommonModule, StatusBadgeComponent, SpinnerComponent, ConfirmDialogComponent],
   templateUrl: './my-orders.component.html'
 })
 export class MyOrdersComponent implements OnInit {
@@ -23,7 +22,6 @@ export class MyOrdersComponent implements OnInit {
   loading = true;
   currentPage = 1;
   orderToCancel: OrderResponse | null = null;
-  orderToPay: OrderResponse | null = null;
 
   constructor(
     private storeService: StoreService,
@@ -69,18 +67,6 @@ export class MyOrdersComponent implements OnInit {
 
   askCancel(order: OrderResponse): void {
     this.orderToCancel = order;
-  }
-
-  askPay(order: OrderResponse): void {
-    this.orderToPay = order;
-  }
-
-  onPaid(updated: OrderResponse): void {
-    const index = this.orders.findIndex(o => o.id === updated.id);
-    if (index !== -1) {
-      this.orders[index] = updated;
-    }
-    this.orderToPay = null;
   }
 
   confirmCancel(): void {

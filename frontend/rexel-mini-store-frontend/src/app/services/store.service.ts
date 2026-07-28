@@ -30,8 +30,4 @@ export class StoreService {
   cancelOrder(orderId: number): Observable<OrderResponse> {
     return this.http.patch<OrderResponse>(`${this.apiUrl}/orders/${orderId}/cancel`, {});
   }
-
-  payOrder(orderId: number): Observable<OrderResponse> {
-    return this.http.patch<OrderResponse>(`${this.apiUrl}/orders/${orderId}/pay`, {});
-  }
 }

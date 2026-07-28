@@ -19,6 +19,7 @@ public class NotificationService {
 
     private final NotificationRepository notificationRepository;
     private final ChannelDecisionService channelDecisionService;
+    private final PushNotificationSender pushNotificationSender;
 
     public Notification createFromEvent(RexelEvent event) {
         Set<Channel> channels = channelDecisionService.decideChannels(event.getType(), event.getUrgency());
@@ -34,7 +35,13 @@ public class NotificationService {
         notification.setRead(false);
         notification.setCreatedAt(LocalDateTime.now());
 
-        return notificationRepository.save(notification);
+        Notification saved = notificationRepository.save(notification);
+
+        if (saved.getChannels().contains(Channel.PUSH)) {
+            pushNotificationSender.send(saved);
+        }
+
+        return saved;
     }
 public Notification createManual(AdminNotificationCreateRequest request) {
     Notification notification = new Notification();
@@ -50,7 +57,13 @@ public Notification createManual(AdminNotificationCreateRequest request) {
     notification.setRead(false);
     notification.setCreatedAt(LocalDateTime.now());
 
-    return notificationRepository.save(notification);
+    Notification saved = notificationRepository.save(notification);
+
+    if (saved.getChannels().contains(Channel.PUSH)) {
+        pushNotificationSender.send(saved);
+    }
+
+    return saved;
 }
 
     public void markAsRead(Long id) {
