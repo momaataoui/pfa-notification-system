@@ -1,8 +1,11 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { NotificationChannel, NotificationPriority, NotificationRecipientType } from '../../../models/notification.model';
+import { Customer } from '../../../models/admin.model';
 import { NotificationStoreService } from '../../../services/notification-store.service';
+import { AdminService } from '../../../services/admin.service';
+import { AuthService } from '../../../services/auth.service';
 import { ToastService } from '../../../services/toast.service';
 
 @Component({
@@ -11,16 +14,20 @@ import { ToastService } from '../../../services/toast.service';
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './admin-notifications.component.html'
 })
-export class AdminNotificationsComponent {
+export class AdminNotificationsComponent implements OnInit {
 
   private fb = inject(FormBuilder);
   private notificationStore = inject(NotificationStoreService);
+  private adminService = inject(AdminService);
+  private authService = inject(AuthService);
   private toastService = inject(ToastService);
 
   readonly recipientTypes: NotificationRecipientType[] = ['USER', 'GROUP', 'BROADCAST'];
   readonly priorities: NotificationPriority[] = ['LOW', 'NORMAL', 'HIGH'];
   readonly channels: NotificationChannel[] = ['PUSH', 'EMAIL', 'SMS'];
 
+  customers: Customer[] = [];
+  loadingCustomers = true;
   sending = false;
 
   form = this.fb.group({
@@ -33,6 +40,17 @@ export class AdminNotificationsComponent {
     title: ['', Validators.required],
     message: ['', Validators.required]
   });
+
+  ngOnInit(): void {
+    this.adminService.getCustomers().subscribe({
+      next: (customers) => {
+        const ownEmail = this.authService.currentUser?.email;
+        this.customers = customers.filter(c => c.email !== ownEmail);
+        this.loadingCustomers = false;
+      },
+      error: () => this.loadingCustomers = false
+    });
+  }
 
   get isUserRecipient(): boolean {
     return this.form.controls.recipientType.value === 'USER';

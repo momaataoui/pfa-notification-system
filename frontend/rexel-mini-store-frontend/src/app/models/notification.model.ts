@@ -1,6 +1,7 @@
 export type NotificationChannel = 'PUSH' | 'EMAIL' | 'SMS';
 export type NotificationPriority = 'LOW' | 'NORMAL' | 'HIGH';
 export type NotificationRecipientType = 'USER' | 'GROUP' | 'BROADCAST';
+export type DeliveryStatus = 'PENDING' | 'DELIVERED' | 'FAILED';
 
 export interface AppNotification {
   id: number;
@@ -13,6 +14,28 @@ export interface AppNotification {
   sourceEventType: string | null;
   read: boolean;
   createdAt: string;
+  deliveryStatus: DeliveryStatus;
+  failureReason: string | null;
+}
+
+export interface DailyChannelCount {
+  date: string;
+  push: number;
+  email: number;
+  sms: number;
+}
+
+export interface DeliveryBreakdown {
+  delivered: number;
+  failed: number;
+  pending: number;
+}
+
+export interface NotificationStatsResponse {
+  totalSent: number;
+  channelCounts: Record<NotificationChannel, number>;
+  timeline: DailyChannelCount[];
+  delivery: DeliveryBreakdown;
 }
 
 export interface AdminNotificationRequest {

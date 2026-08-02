@@ -71,4 +71,22 @@ public class Notification {
     private boolean read = false;          // lue ou non par le destinataire
 
     private LocalDateTime createdAt;       // date de création
+
+    // ===== Statut de livraison =====
+    // Reflete le resultat reel de l'envoi (EMAIL a un signal d'echec fiable via
+    // JavaMailSender ; PUSH n'a pas d'accuse de reception, donc "succes" y
+    // signifie seulement "envoi tente", pas "recu par le navigateur")
+
+    @Enumerated(EnumType.STRING)
+    private DeliveryStatus deliveryStatus = DeliveryStatus.PENDING;
+
+    private String failureReason;          // raison de l'echec si FAILED, sinon null
+
+    // ===== Pont CQRS =====
+    // Identifiant de l'agregat Axon dont cette ligne est la projection en
+    // lecture. Sert a retrouver quel agregat cibler quand le frontend envoie
+    // une commande (ex: MarkAsReadCommand) en ne connaissant que "id" (Long).
+    // Nullable : les lignes creees avant l'integration Axon n'en ont pas.
+
+    private String aggregateId;
 }

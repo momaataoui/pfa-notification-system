@@ -1,0 +1,39 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Échecs d'envoi</h1>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && failures.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+  Aucun echec recent.
+</div>
+
+<div *ngIf="!loading && failures.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-gray-50 text-gray-500 dark:bg-neutral-900 dark:text-neutral-400">
+      <tr>
+        <th class="px-4 py-3">Titre</th>
+        <th class="px-4 py-3">Destinataire</th>
+        <th class="px-4 py-3">Canal</th>
+        <th class="px-4 py-3">Raison</th>
+        <th class="px-4 py-3">Date</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let n of failures" class="border-t border-gray-100 dark:border-neutral-800">
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ n.title }}</td>
+        <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ recipientLabel(n) }}</td>
+        <td class="px-4 py-3">
+          <span
+            *ngFor="let channel of n.channels"
+            class="mr-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+            [class.bg-blue-100]="channel === 'PUSH'" [class.text-blue-700]="channel === 'PUSH'"
+            [class.bg-orange-100]="channel === 'EMAIL'" [class.text-orange-700]="channel === 'EMAIL'"
+            [class.bg-emerald-100]="channel === 'SMS'" [class.text-emerald-700]="channel === 'SMS'">
+            {{ channel }}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-red-600 dark:text-red-400">{{ n.failureReason ?? 'Raison inconnue' }}</td>
+        <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>

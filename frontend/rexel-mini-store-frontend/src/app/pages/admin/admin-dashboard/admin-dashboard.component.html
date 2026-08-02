@@ -1,34 +1,143 @@
-<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Dashboard</h1>
+<div class="mb-6">
+  <h1 class="text-2xl font-bold text-anthracite dark:text-white">
+    Bienvenue, {{ authService.currentUser?.firstName }} {{ authService.currentUser?.lastName }} !
+  </h1>
+  <p class="text-sm text-gray-500 dark:text-neutral-400">Voici un aperçu de votre boutique.</p>
+</div>
 
 <app-spinner *ngIf="loading"></app-spinner>
 
 <div *ngIf="!loading && stats" class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950">
+    <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-blue-600 dark:bg-blue-950/50 dark:text-blue-400">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+        <path fill-rule="evenodd" d="M11.622 1.602a.75.75 0 01.756 0l8.25 4.723a.75.75 0 010 1.302l-8.25 4.723a.75.75 0 01-.756 0L3.372 7.627a.75.75 0 010-1.302l8.25-4.723zM3.372 12.373a.75.75 0 011.023-.276l7.605 4.234 7.605-4.234a.75.75 0 11.729 1.313l-7.94 4.416a.75.75 0 01-.729 0l-7.94-4.416a.75.75 0 01-.353-1.037zm0 4.5a.75.75 0 011.023-.276l7.605 4.234 7.605-4.234a.75.75 0 11.729 1.313l-7.94 4.416a.75.75 0 01-.729 0l-7.94-4.416a.75.75 0 01-.353-1.037z" clip-rule="evenodd" />
+      </svg>
+    </div>
     <p class="text-sm text-gray-500 dark:text-neutral-400">Produits</p>
     <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.productCount }}</p>
   </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950">
+    <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-indigo-100 text-indigo-600 dark:bg-indigo-950/50 dark:text-indigo-400">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+        <path d="M2.25 2.25a.75.75 0 000 1.5h1.386c.17 0 .318.114.362.278l2.558 9.592a3.752 3.752 0 00-2.806 3.63c0 .414.336.75.75.75h15.75a.75.75 0 000-1.5H5.378A2.25 2.25 0 017.5 15h11.218a.75.75 0 00.73-.579l1.5-6.5a.75.75 0 00-.73-.921H6.156L5.5 4.278A1.875 1.875 0 003.636 2.25H2.25z" />
+        <path d="M8.25 21a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25zM18.75 21a1.125 1.125 0 100-2.25 1.125 1.125 0 000 2.25z" />
+      </svg>
+    </div>
     <p class="text-sm text-gray-500 dark:text-neutral-400">Commandes</p>
     <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.orderCount }}</p>
   </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950">
+    <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-purple-100 text-purple-600 dark:bg-purple-950/50 dark:text-purple-400">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+        <path d="M4.5 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM14.25 8.625a3.375 3.375 0 116.75 0 3.375 3.375 0 01-6.75 0zM1.5 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM17.25 19.128l-.001.144a2.25 2.25 0 01-.233.96 10.088 10.088 0 005.06-1.01.75.75 0 00.42-.643 4.875 4.875 0 00-6.957-4.611 8.586 8.586 0 011.71 5.157v.003z" />
+      </svg>
+    </div>
     <p class="text-sm text-gray-500 dark:text-neutral-400">Clients</p>
     <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ stats.customerCount }}</p>
   </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
+
+  <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md dark:border-neutral-800 dark:bg-neutral-950">
+    <div class="mb-3 flex h-10 w-10 items-center justify-center rounded-lg bg-blue-100 text-rexel dark:bg-blue-950/50">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" class="h-5 w-5">
+        <path d="M2.25 6.75c0-.966.784-1.75 1.75-1.75h16c.966 0 1.75.784 1.75 1.75v10.5A1.75 1.75 0 0120 19H4a1.75 1.75 0 01-1.75-1.75V6.75zM12 8.25a3.75 3.75 0 100 7.5 3.75 3.75 0 000-7.5zM4.5 8.25a.75.75 0 00-.75.75v.008a.75.75 0 00.75.75h.008a.75.75 0 00.75-.75V9a.75.75 0 00-.75-.75H4.5zM18.75 8.25h-.008a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V9a.75.75 0 00-.75-.75zM4.5 14.25h-.008a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75H4.5a.75.75 0 00.75-.75V15a.75.75 0 00-.75-.75zM18.75 14.25h-.008a.75.75 0 00-.75.75v.008c0 .414.336.75.75.75h.008a.75.75 0 00.75-.75V15a.75.75 0 00-.75-.75z" />
+      </svg>
+    </div>
     <p class="text-sm text-gray-500 dark:text-neutral-400">Chiffre d'affaires</p>
     <p class="mt-1 text-2xl font-bold text-rexel">{{ stats.totalRevenue }} DH</p>
   </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
-    <p class="text-sm text-gray-500 dark:text-neutral-400">En attente</p>
-    <p class="mt-1 text-2xl font-bold text-gray-600 dark:text-neutral-300">{{ stats.pendingCount }}</p>
+</div>
+
+<div class="mt-10">
+  <h2 class="mb-4 text-lg font-bold text-anthracite dark:text-white">Aperçu notifications</h2>
+
+  <app-spinner *ngIf="loadingNotifStats"></app-spinner>
+
+  <div *ngIf="!loadingNotifStats && notifStats && notifStats.totalSent === 0" class="rounded-lg border border-gray-200 bg-white py-16 text-center text-gray-400 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-500">
+    Aucune notification envoyée pour le moment.
   </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
-    <p class="text-sm text-gray-500 dark:text-neutral-400">Livrees</p>
-    <p class="mt-1 text-2xl font-bold text-green-600">{{ stats.deliveredCount }}</p>
-  </div>
-  <div class="rounded-lg border border-gray-200 bg-white p-5 dark:border-neutral-800 dark:bg-neutral-950">
-    <p class="text-sm text-gray-500 dark:text-neutral-400">Annulees</p>
-    <p class="mt-1 text-2xl font-bold text-red-600">{{ stats.cancelledCount }}</p>
-  </div>
+
+  <ng-container *ngIf="!loadingNotifStats && notifStats && notifStats.totalSent > 0">
+    <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 lg:col-span-2">
+        <h3 class="mb-4 text-sm font-semibold text-anthracite dark:text-white">Notifications envoyées (7 derniers jours)</h3>
+        <app-line-chart [labels]="notifDays" [series]="notifSeries"></app-line-chart>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+        <h3 class="mb-4 text-sm font-semibold text-anthracite dark:text-white">Notifications par canal</h3>
+        <app-donut-chart [segments]="channelDonutSegments"></app-donut-chart>
+      </div>
+    </div>
+
+    <div class="mt-4 grid grid-cols-1 gap-4 lg:grid-cols-3">
+      <div class="flex flex-col items-center rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+        <h3 class="mb-4 self-start text-sm font-semibold text-anthracite dark:text-white">Taux de livraison</h3>
+        <app-meter [value]="deliveryRate" [color]="meterColor" [trackColor]="meterTrackColor" label="Taux de reussite"></app-meter>
+        <div class="mt-4 flex w-full justify-around text-center text-xs">
+          <div>
+            <p class="flex items-center justify-center gap-1.5 font-semibold text-anthracite dark:text-white">
+              <span class="h-2 w-2 rounded-full bg-green-600"></span>{{ notifStats.delivery.delivered }}
+            </p>
+            <p class="text-gray-500 dark:text-neutral-400">Livrées</p>
+          </div>
+          <div>
+            <p class="flex items-center justify-center gap-1.5 font-semibold text-anthracite dark:text-white">
+              <span class="h-2 w-2 rounded-full bg-red-600"></span>{{ notifStats.delivery.failed }}
+            </p>
+            <p class="text-gray-500 dark:text-neutral-400">Échecs</p>
+          </div>
+          <div>
+            <p class="flex items-center justify-center gap-1.5 font-semibold text-anthracite dark:text-white">
+              <span class="h-2 w-2 rounded-full bg-gray-400"></span>{{ notifStats.delivery.pending }}
+            </p>
+            <p class="text-gray-500 dark:text-neutral-400">En attente</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 lg:col-span-2">
+        <div class="mb-3 flex items-center justify-between">
+          <h3 class="text-sm font-semibold text-anthracite dark:text-white">Dernières notifications envoyées</h3>
+          <a routerLink="/admin/notifications/history" class="text-xs font-medium text-rexel hover:underline">Voir tout</a>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="text-gray-500 dark:text-neutral-400">
+              <tr>
+                <th class="pb-2 pr-3 font-medium">Titre</th>
+                <th class="pb-2 pr-3 font-medium">Destinataire</th>
+                <th class="pb-2 pr-3 font-medium">Canal</th>
+                <th class="pb-2 font-medium">Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let n of recentNotifications" class="border-t border-gray-100 dark:border-neutral-800">
+                <td class="py-2 pr-3 text-anthracite dark:text-white">{{ n.title }}</td>
+                <td class="py-2 pr-3 text-gray-500 dark:text-neutral-400">{{ n.recipientEmail ?? (n.recipientType === 'BROADCAST' ? 'Diffusion (tous)' : 'Groupe') }}</td>
+                <td class="py-2 pr-3">
+                  <span
+                    *ngFor="let channel of n.channels"
+                    class="mr-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+                    [class.bg-blue-100]="channel === 'PUSH'" [class.text-blue-700]="channel === 'PUSH'"
+                    [class.bg-orange-100]="channel === 'EMAIL'" [class.text-orange-700]="channel === 'EMAIL'"
+                    [class.bg-emerald-100]="channel === 'SMS'" [class.text-emerald-700]="channel === 'SMS'">
+                    {{ channel }}
+                  </span>
+                </td>
+                <td class="py-2"
+                  [class.text-green-600]="n.deliveryStatus === 'DELIVERED'"
+                  [class.text-red-600]="n.deliveryStatus === 'FAILED'"
+                  [class.text-gray-500]="n.deliveryStatus === 'PENDING'">
+                  {{ n.deliveryStatus === 'DELIVERED' ? 'Livrée' : n.deliveryStatus === 'FAILED' ? 'Échec' : 'En attente' }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </ng-container>
 </div>

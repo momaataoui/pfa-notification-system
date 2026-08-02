@@ -14,4 +14,5 @@ export interface AdminStats {
   pendingCount: number;
   cancelledCount: number;
   totalRevenue: number;
+  unreadOrderCount: number;
 }

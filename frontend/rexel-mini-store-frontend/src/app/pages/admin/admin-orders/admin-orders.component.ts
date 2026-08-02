@@ -72,4 +72,16 @@ export class AdminOrdersComponent implements OnInit {
       error: (err) => this.toastService.error(err?.error?.error ?? 'Une erreur est survenue.')
     });
   }
+
+  markAsRead(order: OrderResponse): void {
+    this.adminService.markOrderAsRead(order.id).subscribe({
+      next: (updated) => {
+        const index = this.orders.findIndex(o => o.id === updated.id);
+        if (index !== -1) {
+          this.orders[index] = updated;
+        }
+      },
+      error: (err) => this.toastService.error(err?.error?.error ?? 'Une erreur est survenue.')
+    });
+  }
 }

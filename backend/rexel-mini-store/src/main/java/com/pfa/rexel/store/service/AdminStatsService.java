@@ -37,7 +37,8 @@ public class AdminStatsService {
                 orderRepository.countByStatus(OrderStatus.DELIVERED),
                 orderRepository.countByStatus(OrderStatus.PENDING),
                 orderRepository.countByStatus(OrderStatus.CANCELLED),
-                totalRevenue
+                totalRevenue,
+                orderRepository.countByReadFalse()
         );
     }
 }

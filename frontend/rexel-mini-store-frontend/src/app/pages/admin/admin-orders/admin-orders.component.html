@@ -26,11 +26,18 @@
         <th class="px-4 py-3">Total</th>
         <th class="px-4 py-3">Statut</th>
         <th class="px-4 py-3">Changer</th>
+        <th class="px-4 py-3"></th>
       </tr>
     </thead>
     <tbody>
-      <tr *ngFor="let order of pagedOrders" class="border-t border-gray-100 dark:border-neutral-800">
-        <td class="px-4 py-3 text-anthracite dark:text-white">#{{ order.id }}</td>
+      <tr
+        *ngFor="let order of pagedOrders"
+        class="border-t border-gray-100 dark:border-neutral-800"
+        [ngClass]="!order.read ? 'bg-blue-50 dark:bg-blue-950/20' : ''">
+        <td class="px-4 py-3 text-anthracite dark:text-white">
+          <span *ngIf="!order.read" class="mr-1.5 inline-block h-1.5 w-1.5 rounded-full bg-rexel" aria-hidden="true"></span>
+          #{{ order.id }}
+        </td>
         <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.customerFirstName }} {{ order.customerLastName }}</td>
         <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.product.name }}</td>
         <td class="px-4 py-3 text-anthracite dark:text-white">{{ order.totalAmount }} DH</td>
@@ -42,6 +49,15 @@
             class="rounded-md border border-gray-300 px-2 py-1 text-xs text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
             <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
           </select>
+        </td>
+        <td class="px-4 py-3">
+          <button
+            *ngIf="!order.read"
+            type="button"
+            (click)="markAsRead(order)"
+            class="rounded-md border border-gray-300 px-2.5 py-1 text-xs font-medium text-anthracite hover:bg-gray-50 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
+            Marquer comme lu
+          </button>
         </td>
       </tr>
     </tbody>

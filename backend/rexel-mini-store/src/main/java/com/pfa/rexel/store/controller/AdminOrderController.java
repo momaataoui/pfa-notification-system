@@ -35,4 +35,9 @@ public class AdminOrderController {
     public OrderResponse updateStatus(@PathVariable Long id, @Valid @RequestBody OrderStatusUpdateRequest request) {
         return OrderMapper.toDto(orderService.updateStatus(id, request.getStatus()));
     }
+
+    @PatchMapping("/{id}/read")
+    public OrderResponse markAsRead(@PathVariable Long id) {
+        return OrderMapper.toDto(orderService.markAsRead(id));
+    }
 }

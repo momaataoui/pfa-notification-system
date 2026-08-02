@@ -17,4 +17,5 @@ public class AdminStatsResponse {
     private long pendingCount;
     private long cancelledCount;
     private BigDecimal totalRevenue;
+    private long unreadOrderCount;
 }

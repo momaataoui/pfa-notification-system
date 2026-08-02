@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterOutlet } from '@angular/router';
+import { NavigationEnd, Router, RouterOutlet } from '@angular/router';
+import { filter } from 'rxjs';
 import { ToastComponent } from './components/toast/toast.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { ThemeService } from './services/theme.service';
@@ -15,10 +16,13 @@ import { PushNotificationService } from './services/push-notification.service';
 })
 export class AppComponent {
 
+  showNavbar = true;
+
   constructor(
     private themeService: ThemeService,
     private authService: AuthService,
-    private pushNotificationService: PushNotificationService
+    private pushNotificationService: PushNotificationService,
+    private router: Router
   ) {
     this.authService.currentUser$.subscribe(user => {
       if (user) {
@@ -26,6 +30,10 @@ export class AppComponent {
       } else {
         this.pushNotificationService.disconnect();
       }
+    });
+
+    this.router.events.pipe(filter(e => e instanceof NavigationEnd)).subscribe(() => {
+      this.showNavbar = !this.router.url.startsWith('/admin/login');
     });
   }
 }

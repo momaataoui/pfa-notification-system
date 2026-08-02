@@ -47,4 +47,21 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+# Sans ceci, axon-spring-boot-starter essaie par defaut de se connecter a un
+# serveur Axon Server distant (localhost:8124) pour router les commandes et
+# stocker les events. On ne veut pas de serveur separe (decision actee) :
+# desactiver Axon Server bascule automatiquement Axon sur un event store JPA
+# local (tables domain_event_entry/token_entry, creees via ddl-auto: update).
+axon:
+  axonserver:
+    enabled: false
+  eventhandling:
+    processors:
+      # Par defaut, Axon traite les events de facon ASYNCHRONE (TrackingEventProcessor,
+      # thread dedie qui relit l'event store). Ca cree une course : sendAndWait() peut
+      # revenir avant que NotificationProjection ait consomme l'event. "subscribing"
+      # traite l'event de facon SYNCHRONE, dans le meme thread que la commande -
+      # coherent pour une appli mono-instance, pas besoin du mode distribue/replay.
+      notification-projection:
+        mode: subscribing
 

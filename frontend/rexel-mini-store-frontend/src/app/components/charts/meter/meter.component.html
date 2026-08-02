@@ -1,0 +1,15 @@
+<div class="relative flex items-center justify-center" [style.width.px]="size" [style.height.px]="size">
+  <svg [attr.viewBox]="'0 0 ' + size + ' ' + size" [attr.width]="size" [attr.height]="size">
+    <circle [attr.cx]="size / 2" [attr.cy]="size / 2" [attr.r]="radius" fill="none" [attr.stroke]="trackColor" [attr.stroke-width]="strokeWidth" />
+    <g [attr.transform]="'rotate(-90 ' + size / 2 + ' ' + size / 2 + ')'">
+      <circle
+        [attr.cx]="size / 2" [attr.cy]="size / 2" [attr.r]="radius"
+        fill="none" [attr.stroke]="color" [attr.stroke-width]="strokeWidth"
+        [attr.stroke-dasharray]="dashArray" stroke-linecap="round" />
+    </g>
+  </svg>
+  <div class="absolute flex flex-col items-center">
+    <span class="text-2xl font-bold text-anthracite dark:text-white">{{ value }}%</span>
+    <span *ngIf="label" class="text-xs text-gray-500 dark:text-neutral-400">{{ label }}</span>
+  </div>
+</div>

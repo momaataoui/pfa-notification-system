@@ -1,90 +1,110 @@
 package com.pfa.rexel.notification.service;
 
-import com.pfa.rexel.notification.dto.AdminNotificationCreateRequest;
+import com.pfa.rexel.notification.dto.NotificationStatsResponse;
 import com.pfa.rexel.notification.entity.Channel;
+import com.pfa.rexel.notification.entity.DeliveryStatus;
 import com.pfa.rexel.notification.entity.Notification;
-import com.pfa.rexel.notification.entity.Priority;
 import com.pfa.rexel.notification.entity.RecipientType;
-import com.pfa.rexel.notification.event.RexelEvent;
 import com.pfa.rexel.notification.repository.NotificationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Set;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+// Depuis l'integration Axon (voir package cqrs), ce service ne gere plus les
+// ECRITURES (creation, marquage lu) : c'est desormais le role de
+// NotificationAggregate (regles metier) + NotificationProjection (persistence
+// de la table de lecture). NotificationService reste uniquement le cote QUERY
+// du CQRS : consultation de la projection, jamais de decision.
 @Service
 @RequiredArgsConstructor
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
-    private final ChannelDecisionService channelDecisionService;
-    private final PushNotificationSender pushNotificationSender;
-
-    public Notification createFromEvent(RexelEvent event) {
-        Set<Channel> channels = channelDecisionService.decideChannels(event.getType(), event.getUrgency());
-
-        Notification notification = new Notification();
-        notification.setRecipientType(RecipientType.USER);
-        notification.setRecipientEmail(event.getUserId());
-        notification.setTitle(event.getType());
-        notification.setMessage(event.getMessage());
-        notification.setChannels(channels);
-        notification.setPriority(mapUrgencyToPriority(event.getUrgency()));
-        notification.setSourceEventType(event.getType());
-        notification.setRead(false);
-        notification.setCreatedAt(LocalDateTime.now());
-
-        Notification saved = notificationRepository.save(notification);
-
-        if (saved.getChannels().contains(Channel.PUSH)) {
-            pushNotificationSender.send(saved);
-        }
-
-        return saved;
-    }
-public Notification createManual(AdminNotificationCreateRequest request) {
-    Notification notification = new Notification();
-    notification.setRecipientType(request.getRecipientType());
-    notification.setRecipientEmail(
-            request.getRecipientType() == RecipientType.USER ? request.getRecipientEmail() : null
-    );
-    notification.setTitle(request.getTitle());
-    notification.setMessage(request.getMessage());
-    notification.setChannels(request.getChannels());
-    notification.setPriority(request.getPriority());
-    notification.setSourceEventType(null);
-    notification.setRead(false);
-    notification.setCreatedAt(LocalDateTime.now());
-
-    Notification saved = notificationRepository.save(notification);
-
-    if (saved.getChannels().contains(Channel.PUSH)) {
-        pushNotificationSender.send(saved);
-    }
-
-    return saved;
-}
-
-    public void markAsRead(Long id) {
-        Notification notification = notificationRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Notification introuvable: " + id));
-        notification.setRead(true);
-        notificationRepository.save(notification);
-    }
 
     public List<Notification> findForUser(String email) {
         return notificationRepository.findByRecipientEmailOrRecipientType(email, RecipientType.BROADCAST);
     }
 
-    private Priority mapUrgencyToPriority(String urgency) {
-        if (urgency == null) {
-            return Priority.NORMAL;
+    public List<Notification> findAll() {
+        return notificationRepository.findAllByOrderByCreatedAtDesc();
+    }
+
+    public List<Notification> findByDeliveryStatus(DeliveryStatus status) {
+        return notificationRepository.findByDeliveryStatusOrderByCreatedAtDesc(status);
+    }
+
+    public Optional<Notification> findByAggregateId(String aggregateId) {
+        return notificationRepository.findByAggregateId(aggregateId);
+    }
+
+    public Notification findById(Long id) {
+        return notificationRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Notification introuvable: " + id));
+    }
+
+    // Filet de securite pour les notifications creees AVANT l'integration Axon
+    // (aggregateId null) : elles ne peuvent pas etre ciblees par une commande,
+    // donc on les marque lues directement, comme avant.
+    public void markAsReadLegacy(Long id) {
+        Notification notification = findById(id);
+        notification.setRead(true);
+        notificationRepository.save(notification);
+    }
+
+    public NotificationStatsResponse getStats() {
+        List<Notification> all = notificationRepository.findAll();
+
+        Map<String, Long> channelCounts = new HashMap<>();
+        for (Channel channel : Channel.values()) {
+            channelCounts.put(channel.name(), 0L);
         }
-        return switch (urgency.toLowerCase()) {
-            case "high" -> Priority.HIGH;
-            case "low" -> Priority.LOW;
-            default -> Priority.NORMAL;
-        };
+        for (Notification n : all) {
+            for (Channel channel : n.getChannels()) {
+                channelCounts.merge(channel.name(), 1L, Long::sum);
+            }
+        }
+
+        LocalDateTime since = LocalDate.now().minusDays(6).atStartOfDay();
+        List<Notification> recent = notificationRepository.findByCreatedAtAfter(since);
+        DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern("dd/MM");
+
+        List<NotificationStatsResponse.DailyChannelCount> timeline = new ArrayList<>();
+        for (int i = 6; i >= 0; i--) {
+            LocalDate day = LocalDate.now().minusDays(i);
+            long push = 0;
+            long email = 0;
+            long sms = 0;
+            for (Notification n : recent) {
+                if (!n.getCreatedAt().toLocalDate().equals(day)) {
+                    continue;
+                }
+                if (n.getChannels().contains(Channel.PUSH)) {
+                    push++;
+                }
+                if (n.getChannels().contains(Channel.EMAIL)) {
+                    email++;
+                }
+                if (n.getChannels().contains(Channel.SMS)) {
+                    sms++;
+                }
+            }
+            timeline.add(new NotificationStatsResponse.DailyChannelCount(day.format(dayFormat), push, email, sms));
+        }
+
+        NotificationStatsResponse.DeliveryBreakdown delivery = new NotificationStatsResponse.DeliveryBreakdown(
+                notificationRepository.countByDeliveryStatus(DeliveryStatus.DELIVERED),
+                notificationRepository.countByDeliveryStatus(DeliveryStatus.FAILED),
+                notificationRepository.countByDeliveryStatus(DeliveryStatus.PENDING)
+        );
+
+        return new NotificationStatsResponse(all.size(), channelCounts, timeline, delivery);
     }
 }

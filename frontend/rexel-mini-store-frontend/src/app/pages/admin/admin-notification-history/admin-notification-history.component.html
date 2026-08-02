@@ -1,0 +1,76 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Historique des notifications</h1>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && notifications.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+  Aucune notification envoyée pour le moment.
+</div>
+
+<ng-container *ngIf="!loading && notifications.length > 0">
+  <div class="mb-4 flex flex-wrap gap-3">
+    <input
+      type="text"
+      [(ngModel)]="searchTerm"
+      (ngModelChange)="onFilterChange()"
+      placeholder="Rechercher (titre, destinataire)..."
+      class="w-64 max-w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+    <select
+      [(ngModel)]="channelFilter"
+      (ngModelChange)="onFilterChange()"
+      class="rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+      <option value="">Tous les canaux</option>
+      <option value="PUSH">Push</option>
+      <option value="EMAIL">Email</option>
+      <option value="SMS">SMS</option>
+    </select>
+  </div>
+
+  <div *ngIf="filteredNotifications.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+    Aucune notification ne correspond a la recherche.
+  </div>
+
+  <div *ngIf="filteredNotifications.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+    <table class="w-full text-left text-sm">
+      <thead class="bg-gray-50 text-gray-500 dark:bg-neutral-900 dark:text-neutral-400">
+        <tr>
+          <th class="px-4 py-3">Titre</th>
+          <th class="px-4 py-3">Destinataire</th>
+          <th class="px-4 py-3">Canal</th>
+          <th class="px-4 py-3">Priorité</th>
+          <th class="px-4 py-3">Statut</th>
+          <th class="px-4 py-3">Date</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let n of pagedNotifications" class="border-t border-gray-100 dark:border-neutral-800">
+          <td class="px-4 py-3 text-anthracite dark:text-white">{{ n.title }}</td>
+          <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ recipientLabel(n) }}</td>
+          <td class="px-4 py-3">
+            <span
+              *ngFor="let channel of n.channels"
+              class="mr-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"
+              [class.bg-blue-100]="channel === 'PUSH'" [class.text-blue-700]="channel === 'PUSH'"
+              [class.bg-orange-100]="channel === 'EMAIL'" [class.text-orange-700]="channel === 'EMAIL'"
+              [class.bg-emerald-100]="channel === 'SMS'" [class.text-emerald-700]="channel === 'SMS'">
+              {{ channel }}
+            </span>
+          </td>
+          <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ n.priority }}</td>
+          <td class="px-4 py-3"
+            [class.text-green-600]="n.deliveryStatus === 'DELIVERED'"
+            [class.text-red-600]="n.deliveryStatus === 'FAILED'"
+            [class.text-gray-500]="n.deliveryStatus === 'PENDING'">
+            {{ n.deliveryStatus === 'DELIVERED' ? 'Livrée' : n.deliveryStatus === 'FAILED' ? 'Échec' : 'En attente' }}
+          </td>
+          <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ n.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div *ngIf="totalPages > 1" class="mt-6 flex items-center justify-center gap-2">
+    <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8592;</button>
+    <span class="text-sm text-gray-500 dark:text-neutral-400">Page {{ currentPage }} / {{ totalPages }}</span>
+    <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8594;</button>
+  </div>
+</ng-container>

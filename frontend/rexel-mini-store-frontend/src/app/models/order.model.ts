@@ -20,4 +20,5 @@ export interface OrderResponse {
   totalAmount: number;
   status: OrderStatus;
   createdAt: string;
+  read: boolean;
 }

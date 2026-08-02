@@ -1,8 +1,13 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import Keycloak from 'keycloak-js';
-import { BehaviorSubject, Observable, firstValueFrom, tap } from 'rxjs';
+import { BehaviorSubject, from, Observable, firstValueFrom, switchMap, tap } from 'rxjs';
 import { StoreUser, UpdateProfileRequest } from '../models/store-user.model';
+
+interface KeycloakTokenResponse {
+  access_token: string;
+  refresh_token: string;
+}
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -46,6 +51,41 @@ export class AuthService {
 
   requestLogin(): void {
     this.keycloak.login({ redirectUri: window.location.href });
+  }
+
+  loginWithPassword(email: string, password: string): Observable<void> {
+    const body = new HttpParams()
+      .set('grant_type', 'password')
+      .set('client_id', 'rexel-app')
+      .set('username', email)
+      .set('password', password);
+
+    return this.http.post<KeycloakTokenResponse>(
+      `${this.keycloak.authServerUrl}/realms/${this.keycloak.realm}/protocol/openid-connect/token`,
+      body,
+      { headers: { 'Content-Type': 'application/x-www-form-urlencoded' } }
+    ).pipe(
+      switchMap(tokens => {
+        this.keycloak.token = tokens.access_token;
+        this.keycloak.refreshToken = tokens.refresh_token;
+        this.keycloak.tokenParsed = this.decodeJwtPayload(tokens.access_token);
+        this.keycloak.timeSkew = 0;
+        this.keycloak.authenticated = true;
+        return from(this.loadProfile());
+      })
+    );
+  }
+
+  private decodeJwtPayload(token: string): Record<string, unknown> {
+    const payload = token.split('.')[1];
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const json = decodeURIComponent(
+      atob(base64)
+        .split('')
+        .map(c => '%' + c.charCodeAt(0).toString(16).padStart(2, '0'))
+        .join('')
+    );
+    return JSON.parse(json);
   }
 
   register(): void {

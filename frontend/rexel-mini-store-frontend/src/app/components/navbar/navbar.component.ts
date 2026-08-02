@@ -8,6 +8,7 @@ import { AppNotification, NotificationPriority } from '../../models/notification
 import { AuthService } from '../../services/auth.service';
 import { ThemeService } from '../../services/theme.service';
 import { NotificationStoreService } from '../../services/notification-store.service';
+import { LogoMarkComponent } from '../logo-mark/logo-mark.component';
 import { timeAgo } from '../../utils/time-ago';
 
 type NotifFilter = 'all' | 'unread';
@@ -15,7 +16,7 @@ type NotifFilter = 'all' | 'unread';
 @Component({
   selector: 'app-navbar',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink],
+  imports: [CommonModule, FormsModule, RouterLink, LogoMarkComponent],
   templateUrl: './navbar.component.html'
 })
 export class NavbarComponent {

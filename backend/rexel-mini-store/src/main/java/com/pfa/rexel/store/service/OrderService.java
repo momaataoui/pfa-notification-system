@@ -23,6 +23,8 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
+    private static final String ADMIN_EMAIL = "hmaataouibelabbes.ensa@uhp.ac.ma";
+
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final KafkaEventPublisher kafkaEventPublisher;
@@ -58,9 +60,17 @@ public class OrderService {
                 "normal"
         );
 
+        kafkaEventPublisher.publish(
+                ADMIN_EMAIL,
+                saved.getCustomerFirstName() + " " + saved.getCustomerLastName() + " a passe la commande #" + saved.getId()
+                        + " (" + product.getName() + ")",
+                "ADMIN_NEW_ORDER",
+                "normal"
+        );
+
         if (product.getStockQuantity() < 10) {
             kafkaEventPublisher.publish(
-                    "admin@rexel.com",
+                    ADMIN_EMAIL,
                     "Stock faible pour " + product.getName() + " : " + product.getStockQuantity() + " unites restantes",
                     "LOW_STOCK_ALERT",
                     "high"
@@ -79,6 +89,14 @@ public class OrderService {
         return status != null
                 ? orderRepository.findByStatus(status, sort)
                 : orderRepository.findAll(sort);
+    }
+
+    @Transactional
+    public Order markAsRead(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new OrderNotFoundException(orderId));
+        order.setRead(true);
+        return orderRepository.save(order);
     }
 
     @Transactional

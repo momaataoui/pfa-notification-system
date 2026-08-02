@@ -34,6 +34,10 @@ export class AdminService {
     return this.http.patch<OrderResponse>(`${this.apiUrl}/orders/${id}/status`, { status });
   }
 
+  markOrderAsRead(id: number): Observable<OrderResponse> {
+    return this.http.patch<OrderResponse>(`${this.apiUrl}/orders/${id}/read`, {});
+  }
+
   getCustomers(): Observable<Customer[]> {
     return this.http.get<Customer[]>(`${this.apiUrl}/customers`);
   }

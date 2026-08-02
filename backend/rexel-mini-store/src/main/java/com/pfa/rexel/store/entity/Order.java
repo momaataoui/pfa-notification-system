@@ -43,4 +43,6 @@ public class Order {
     private OrderStatus status;
 
     private LocalDateTime createdAt;
+
+    private boolean read = false;      // l'admin a-t-il deja vu cette commande ?
 }

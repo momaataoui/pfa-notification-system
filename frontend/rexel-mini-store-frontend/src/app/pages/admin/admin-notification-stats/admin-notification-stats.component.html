@@ -1,0 +1,36 @@
+<h1 class="mb-6 text-2xl font-bold text-anthracite dark:text-white">Statistiques des notifications</h1>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && totalSent === 0" class="rounded-lg border border-gray-200 bg-white py-16 text-center text-gray-400 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 dark:text-neutral-500">
+  Aucune notification envoyée pour le moment.
+</div>
+
+<ng-container *ngIf="!loading && totalSent > 0">
+  <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-3">
+    <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <p class="text-sm text-gray-500 dark:text-neutral-400">Total envoyées (tous temps)</p>
+      <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ totalSent }}</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <p class="text-sm text-gray-500 dark:text-neutral-400">Moyenne par jour (7j)</p>
+      <p class="mt-1 text-2xl font-bold text-anthracite dark:text-white">{{ averagePerDay }}</p>
+    </div>
+    <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <p class="text-sm text-gray-500 dark:text-neutral-400">Canal dominant</p>
+      <p class="mt-1 text-2xl font-bold text-rexel">{{ topChannel }}</p>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-1 gap-4 lg:grid-cols-3">
+    <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950 lg:col-span-2">
+      <h3 class="mb-4 text-sm font-semibold text-anthracite dark:text-white">Notifications envoyées (7 derniers jours)</h3>
+      <app-line-chart [labels]="days" [series]="series"></app-line-chart>
+    </div>
+
+    <div class="rounded-lg border border-gray-200 bg-white p-5 shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+      <h3 class="mb-4 text-sm font-semibold text-anthracite dark:text-white">Répartition par canal</h3>
+      <app-donut-chart [segments]="channelDonutSegments"></app-donut-chart>
+    </div>
+  </div>
+</ng-container>

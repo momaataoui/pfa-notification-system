@@ -11,7 +11,7 @@ export const adminGuard: CanActivateFn = () => {
   }
 
   if (!authService.isLoggedIn()) {
-    authService.requestLogin();
+    return router.parseUrl('/admin/login');
   }
   return router.parseUrl('/');
 };

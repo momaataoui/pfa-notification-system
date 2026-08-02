@@ -21,4 +21,5 @@ public class OrderResponse {
     private BigDecimal totalAmount;
     private OrderStatus status;
     private LocalDateTime createdAt;
+    private boolean read;
 }

@@ -1,12 +1,18 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, forkJoin, map, Observable } from 'rxjs';
-import { AdminNotificationRequest, AppNotification } from '../models/notification.model';
+import {
+  AdminNotificationRequest,
+  AppNotification,
+  DeliveryStatus,
+  NotificationStatsResponse
+} from '../models/notification.model';
 
 @Injectable({ providedIn: 'root' })
 export class NotificationStoreService {
 
   private readonly apiUrl = 'http://localhost:8080/api/notifications';
+  private readonly adminApiUrl = 'http://localhost:8080/api/admin/notifications';
 
   private readonly notificationsSubject = new BehaviorSubject<AppNotification[]>([]);
   readonly notifications$ = this.notificationsSubject.asObservable();
@@ -33,7 +39,17 @@ export class NotificationStoreService {
   }
 
   sendManual(request: AdminNotificationRequest): Observable<AppNotification> {
-    return this.http.post<AppNotification>('http://localhost:8080/api/admin/notifications', request);
+    return this.http.post<AppNotification>(this.adminApiUrl, request);
+  }
+
+  getAllNotifications(status?: DeliveryStatus): Observable<AppNotification[]> {
+    return status
+      ? this.http.get<AppNotification[]>(this.adminApiUrl, { params: { status } })
+      : this.http.get<AppNotification[]>(this.adminApiUrl);
+  }
+
+  getStats(): Observable<NotificationStatsResponse> {
+    return this.http.get<NotificationStatsResponse>(`${this.adminApiUrl}/stats`);
   }
 
   markAsRead(notification: AppNotification): void {
