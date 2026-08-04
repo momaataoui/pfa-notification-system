@@ -21,3 +21,6 @@ dist/
 # OS
 .DS_Store
 Thumbs.db
+
+# Ancien clone duplique (a son propre .git, ne doit jamais etre suivi ici)
+pfa-notification-system/
