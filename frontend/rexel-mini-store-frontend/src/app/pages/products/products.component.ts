@@ -30,6 +30,10 @@ export class ProductsComponent implements OnInit {
   productToConfirm: Product | null = null;
   quantity = 1;
 
+  requestingProduct = false;
+  requestProductName = '';
+  requestDescription = '';
+
   readonly getProductIcon = getProductIcon;
 
   constructor(
@@ -99,6 +103,43 @@ export class ProductsComponent implements OnInit {
 
   closeConfirm(): void {
     this.productToConfirm = null;
+  }
+
+  openProductRequest(): void {
+    if (!this.currentUser) {
+      this.authService.requestLogin();
+      return;
+    }
+    this.requestProductName = this.searchTerm;
+    this.requestDescription = '';
+    this.requestingProduct = true;
+  }
+
+  closeProductRequest(): void {
+    this.requestingProduct = false;
+  }
+
+  submitProductRequest(): void {
+    const user = this.currentUser;
+    if (!user || !this.requestProductName.trim()) {
+      return;
+    }
+
+    this.storeService.requestProduct({
+      productName: this.requestProductName.trim(),
+      description: this.requestDescription.trim(),
+      customerFirstName: user.firstName,
+      customerLastName: user.lastName,
+      customerEmail: user.email
+    }).subscribe({
+      next: () => {
+        this.requestingProduct = false;
+        this.toastService.success('Demande envoyee, nous vous tiendrons informe.');
+      },
+      error: (err) => {
+        this.toastService.error(err?.error?.error ?? 'Une erreur est survenue.');
+      }
+    });
   }
 
   get totalForConfirmation(): number {

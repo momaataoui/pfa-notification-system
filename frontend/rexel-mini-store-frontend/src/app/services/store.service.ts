@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { Product } from '../models/product.model';
 import { OrderRequest, OrderResponse } from '../models/order.model';
+import { ProductRequestCreate, ProductRequestResponse } from '../models/product-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class StoreService {
@@ -29,5 +30,9 @@ export class StoreService {
 
   cancelOrder(orderId: number): Observable<OrderResponse> {
     return this.http.patch<OrderResponse>(`${this.apiUrl}/orders/${orderId}/cancel`, {});
+  }
+
+  requestProduct(request: ProductRequestCreate): Observable<ProductRequestResponse> {
+    return this.http.post<ProductRequestResponse>(`${this.apiUrl}/product-requests`, request);
   }
 }

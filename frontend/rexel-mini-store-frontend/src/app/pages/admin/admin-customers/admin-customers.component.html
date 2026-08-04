@@ -19,7 +19,21 @@
       <tr *ngFor="let customer of pagedCustomers" class="border-t border-gray-100 dark:border-neutral-800">
         <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.firstName }} {{ customer.lastName }}</td>
         <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.email }}</td>
-        <td class="px-4 py-3 text-anthracite dark:text-white">{{ customer.phone }}</td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">
+          <div *ngIf="editingCustomerId !== customer.id" class="flex items-center gap-2">
+            <span>{{ customer.phone || '—' }}</span>
+            <button type="button" (click)="startEditPhone(customer)" class="text-xs text-rexel hover:underline">Modifier</button>
+          </div>
+          <div *ngIf="editingCustomerId === customer.id" class="flex items-center gap-2">
+            <input
+              type="tel"
+              [(ngModel)]="editPhoneValue"
+              placeholder="Ex: 0612345678"
+              class="w-40 rounded-md border border-gray-300 px-2 py-1 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+            <button type="button" (click)="savePhone(customer)" [disabled]="savingPhone" class="rounded-md bg-rexel px-2 py-1 text-xs font-semibold text-white hover:bg-rexel-dark disabled:opacity-50">Enregistrer</button>
+            <button type="button" (click)="cancelEditPhone()" class="rounded-md border border-gray-300 px-2 py-1 text-xs text-anthracite dark:border-neutral-700 dark:text-white">Annuler</button>
+          </div>
+        </td>
       </tr>
     </tbody>
   </table>

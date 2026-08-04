@@ -14,6 +14,7 @@ export class AdminLayoutComponent implements OnInit {
 
   notifExpanded = false;
   unreadOrderCount = 0;
+  pendingProductRequestCount = 0;
 
   constructor(
     private router: Router,
@@ -25,14 +26,25 @@ export class AdminLayoutComponent implements OnInit {
 
   ngOnInit(): void {
     this.refreshUnreadOrderCount();
-    // Une notif push (nouvelle commande, etc.) arrive en direct -> on en profite
-    // pour rafraichir le badge sans avoir a sondage/polling dedie.
-    this.notificationStore.notifications$.subscribe(() => this.refreshUnreadOrderCount());
+    this.refreshPendingProductRequestCount();
+    // Une notif push (nouvelle commande, demande de produit, etc.) arrive en
+    // direct -> on en profite pour rafraichir les badges sans polling dedie.
+    this.notificationStore.notifications$.subscribe(() => {
+      this.refreshUnreadOrderCount();
+      this.refreshPendingProductRequestCount();
+    });
   }
 
   private refreshUnreadOrderCount(): void {
     this.adminService.getStats().subscribe({
       next: (stats) => this.unreadOrderCount = stats.unreadOrderCount,
+      error: () => {}
+    });
+  }
+
+  private refreshPendingProductRequestCount(): void {
+    this.adminService.getProductRequests('PENDING').subscribe({
+      next: (requests) => this.pendingProductRequestCount = requests.length,
       error: () => {}
     });
   }

@@ -1,9 +1,9 @@
 export interface Customer {
-  id: number;
+  id: string;
   firstName: string;
   lastName: string;
   email: string;
-  phone: string;
+  phone: string | null;
 }
 
 export interface AdminStats {

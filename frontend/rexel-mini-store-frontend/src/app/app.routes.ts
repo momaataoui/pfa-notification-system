@@ -9,6 +9,7 @@ import { AdminDashboardComponent } from './pages/admin/admin-dashboard/admin-das
 import { AdminProductsComponent } from './pages/admin/admin-products/admin-products.component';
 import { AdminOrdersComponent } from './pages/admin/admin-orders/admin-orders.component';
 import { AdminCustomersComponent } from './pages/admin/admin-customers/admin-customers.component';
+import { AdminProductRequestsComponent } from './pages/admin/admin-product-requests/admin-product-requests.component';
 import { AdminNotificationsComponent } from './pages/admin/admin-notifications/admin-notifications.component';
 import { AdminNotificationHistoryComponent } from './pages/admin/admin-notification-history/admin-notification-history.component';
 import { AdminNotificationStatsComponent } from './pages/admin/admin-notification-stats/admin-notification-stats.component';
@@ -36,6 +37,7 @@ export const routes: Routes = [
       { path: 'products', component: AdminProductsComponent },
       { path: 'orders', component: AdminOrdersComponent },
       { path: 'customers', component: AdminCustomersComponent },
+      { path: 'product-requests', component: AdminProductRequestsComponent },
       { path: 'notifications', component: AdminNotificationsComponent },
       { path: 'notifications/history', component: AdminNotificationHistoryComponent },
       { path: 'notifications/stats', component: AdminNotificationStatsComponent },

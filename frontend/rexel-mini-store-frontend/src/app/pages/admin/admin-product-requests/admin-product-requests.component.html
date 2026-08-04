@@ -1,0 +1,68 @@
+<div class="mb-6 flex flex-wrap items-center justify-between gap-3">
+  <h1 class="text-2xl font-bold text-anthracite dark:text-white">Demandes de produits</h1>
+
+  <select
+    [(ngModel)]="statusFilter"
+    (ngModelChange)="loadRequests()"
+    class="rounded-md border border-gray-300 px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white">
+    <option value="">Tous les statuts</option>
+    <option *ngFor="let s of statuses" [value]="s">{{ s }}</option>
+  </select>
+</div>
+
+<app-spinner *ngIf="loading"></app-spinner>
+
+<div *ngIf="!loading && requests.length === 0" class="py-16 text-center text-gray-400 dark:text-neutral-500">
+  Aucune demande pour ce filtre.
+</div>
+
+<div *ngIf="!loading && requests.length > 0" class="overflow-x-auto rounded-lg border border-gray-200 bg-white shadow-sm dark:border-neutral-800 dark:bg-neutral-950">
+  <table class="w-full text-left text-sm">
+    <thead class="bg-gray-50 text-gray-500 dark:bg-neutral-900 dark:text-neutral-400">
+      <tr>
+        <th class="px-4 py-3">Client</th>
+        <th class="px-4 py-3">Produit demande</th>
+        <th class="px-4 py-3">Details</th>
+        <th class="px-4 py-3">Statut</th>
+        <th class="px-4 py-3">Date</th>
+        <th class="px-4 py-3">Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let request of pagedRequests" class="border-t border-gray-100 dark:border-neutral-800">
+        <td class="px-4 py-3 text-anthracite dark:text-white">
+          {{ request.customerFirstName }} {{ request.customerLastName }}
+          <p class="text-xs text-gray-500 dark:text-neutral-400">{{ request.customerEmail }}</p>
+        </td>
+        <td class="px-4 py-3 text-anthracite dark:text-white">{{ request.productName }}</td>
+        <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ request.description || '—' }}</td>
+        <td class="px-4 py-3">
+          <span
+            class="rounded-full px-2 py-0.5 text-[10px] font-semibold"
+            [class.bg-gray-100]="request.status === 'PENDING'" [class.text-gray-700]="request.status === 'PENDING'"
+            [class.bg-green-100]="request.status === 'APPROVED'" [class.text-green-700]="request.status === 'APPROVED'"
+            [class.bg-red-100]="request.status === 'REJECTED'" [class.text-red-700]="request.status === 'REJECTED'">
+            {{ request.status }}
+          </span>
+        </td>
+        <td class="px-4 py-3 text-gray-500 dark:text-neutral-400">{{ request.createdAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+        <td class="px-4 py-3">
+          <div *ngIf="request.status === 'PENDING'" class="flex gap-2">
+            <button type="button" (click)="approve(request)" class="rounded-md border border-green-300 px-2.5 py-1 text-xs font-medium text-green-700 hover:bg-green-50 dark:border-green-900 dark:text-green-400 dark:hover:bg-green-950/40">
+              Approuver
+            </button>
+            <button type="button" (click)="reject(request)" class="rounded-md border border-red-300 px-2.5 py-1 text-xs font-medium text-red-600 hover:bg-red-50 dark:border-red-900 dark:text-red-400 dark:hover:bg-red-950/40">
+              Refuser
+            </button>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div *ngIf="!loading && totalPages > 1" class="mt-6 flex items-center justify-center gap-2">
+  <button type="button" (click)="goToPage(currentPage - 1)" [disabled]="currentPage === 1" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8592;</button>
+  <span class="text-sm text-gray-500 dark:text-neutral-400">Page {{ currentPage }} / {{ totalPages }}</span>
+  <button type="button" (click)="goToPage(currentPage + 1)" [disabled]="currentPage === totalPages" class="rounded-md border border-gray-300 px-3 py-1.5 text-sm text-anthracite disabled:opacity-40 dark:border-neutral-700 dark:text-white">&#8594;</button>
+</div>

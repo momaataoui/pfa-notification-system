@@ -78,6 +78,36 @@ export class NavbarComponent {
 
   onNotificationClick(notification: AppNotification): void {
     this.notificationStore.markAsRead(notification);
+
+    const target = this.notificationTarget(notification);
+    if (target) {
+      this.notifMenuOpen = false;
+      this.router.navigate([target]);
+    }
+  }
+
+  private notificationTarget(notification: AppNotification): string | null {
+    if (this.isAdmin) {
+      switch (notification.sourceEventType) {
+        case 'PRODUCT_REQUEST_CREATED': return '/admin/product-requests';
+        case 'ADMIN_NEW_ORDER': return '/admin/orders';
+        case 'LOW_STOCK_ALERT': return '/admin/products';
+        default: return null;
+      }
+    }
+
+    switch (notification.sourceEventType) {
+      case 'ORDER_CREATED':
+      case 'ORDER_SHIPPED':
+      case 'ORDER_DELIVERED':
+      case 'ORDER_CANCELLED':
+        return '/my-orders';
+      case 'PRODUCT_REQUEST_APPROVED':
+      case 'PRODUCT_REQUEST_REJECTED':
+        return '/products';
+      default:
+        return null;
+    }
   }
 
   notificationRowClass(notification: AppNotification): string {

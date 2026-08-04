@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class OrderService {
 
-    private static final String ADMIN_EMAIL = "hmaataouibelabbes.ensa@uhp.ac.ma";
+    private static final String ADMIN_EMAIL = "moomaataoui@gmail.com";
 
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;

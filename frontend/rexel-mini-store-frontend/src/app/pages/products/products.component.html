@@ -62,7 +62,13 @@
     <app-spinner *ngIf="loading"></app-spinner>
 
     <div *ngIf="!loading && filteredProducts.length === 0" class="py-16 text-center text-gray-500 dark:text-neutral-500">
-      Aucun produit ne correspond a vos filtres.
+      <p class="mb-4">Aucun produit ne correspond a vos filtres.</p>
+      <button
+        type="button"
+        (click)="openProductRequest()"
+        class="rounded-md border border-rexel px-4 py-2 text-sm font-semibold text-rexel hover:bg-blue-50 dark:hover:bg-neutral-900">
+        Demander cet article
+      </button>
     </div>
 
     <div *ngIf="!loading && filteredProducts.length > 0" class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
@@ -145,6 +151,47 @@
       </button>
       <button type="button" (click)="confirmOrder()" class="rounded-md bg-rexel px-4 py-2 text-sm font-semibold text-white hover:bg-rexel-dark">
         Confirmer la commande
+      </button>
+    </div>
+  </div>
+</div>
+
+<div
+  *ngIf="requestingProduct"
+  class="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
+  (click)="closeProductRequest()">
+  <div class="w-90 max-w-[90vw] rounded-lg border border-gray-200 bg-white p-7 dark:border-neutral-800 dark:bg-neutral-950" (click)="$event.stopPropagation()">
+    <h2 class="mb-1 text-lg font-semibold text-anthracite dark:text-white">Demander un produit</h2>
+    <p class="mb-4 text-sm text-gray-500 dark:text-neutral-500">
+      Vous ne trouvez pas ce que vous cherchez ? Decrivez-le, notre equipe l'etudiera.
+    </p>
+
+    <label class="mb-3 block text-sm text-gray-500 dark:text-neutral-400">
+      Produit recherche
+      <input
+        type="text"
+        [(ngModel)]="requestProductName"
+        class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white" />
+    </label>
+
+    <label class="mb-6 block text-sm text-gray-500 dark:text-neutral-400">
+      Details (optionnel)
+      <textarea
+        [(ngModel)]="requestDescription"
+        rows="3"
+        class="mt-1 block w-full rounded-md border border-gray-300 bg-white px-3 py-2 text-sm text-anthracite focus:border-rexel focus:outline-none dark:border-neutral-700 dark:bg-neutral-900 dark:text-white"></textarea>
+    </label>
+
+    <div class="flex justify-end gap-3">
+      <button type="button" (click)="closeProductRequest()" class="rounded-md border border-gray-300 px-4 py-2 text-sm text-anthracite hover:bg-gray-50 dark:border-neutral-700 dark:text-white dark:hover:bg-neutral-800">
+        Annuler
+      </button>
+      <button
+        type="button"
+        [disabled]="!requestProductName.trim()"
+        (click)="submitProductRequest()"
+        class="rounded-md bg-rexel px-4 py-2 text-sm font-semibold text-white hover:bg-rexel-dark disabled:cursor-not-allowed disabled:opacity-60">
+        Envoyer la demande
       </button>
     </div>
   </div>

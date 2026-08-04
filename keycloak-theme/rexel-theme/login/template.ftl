@@ -214,7 +214,12 @@
       </footer>
     </main>
   </div>
-  <p class="rexel-footer-note">${msg("rexelFooterNote")}</p>
+  <p class="rexel-footer-note">
+    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="14" height="14" aria-hidden="true">
+      <path d="M12 3l7 3v5c0 4.4-2.9 8.3-7 9.5C7.9 19.3 5 15.4 5 11V6l7-3z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/>
+    </svg>
+    <span>${msg("rexelFooterNote")}</span>
+  </p>
 </div>
 <script type="module">
     import Alpine from "alpinejs";

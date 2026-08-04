@@ -1,11 +1,17 @@
 package com.pfa.rexel.store.controller;
 
 import com.pfa.rexel.store.dto.CustomerResponse;
+import com.pfa.rexel.store.dto.UpdateCustomerPhoneRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.keycloak.admin.client.Keycloak;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -26,6 +32,16 @@ public class AdminCustomerController {
         return keycloakAdminClient.realm(realm).users().list().stream()
                 .map(this::toCustomerResponse)
                 .toList();
+    }
+
+    @PatchMapping("/{id}/phone")
+    public CustomerResponse updatePhone(@PathVariable String id, @Valid @RequestBody UpdateCustomerPhoneRequest request) {
+        UserResource userResource = keycloakAdminClient.realm(realm).users().get(id);
+        UserRepresentation user = userResource.toRepresentation();
+        user.singleAttribute("phone", request.getPhone());
+        userResource.update(user);
+
+        return toCustomerResponse(user);
     }
 
     private CustomerResponse toCustomerResponse(UserRepresentation user) {

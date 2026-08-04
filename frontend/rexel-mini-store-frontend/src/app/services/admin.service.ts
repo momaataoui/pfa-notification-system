@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { Product, ProductRequest } from '../models/product.model';
 import { OrderResponse, OrderStatus } from '../models/order.model';
 import { AdminStats, Customer } from '../models/admin.model';
+import { ProductRequestResponse, ProductRequestStatus } from '../models/product-request.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -42,7 +43,25 @@ export class AdminService {
     return this.http.get<Customer[]>(`${this.apiUrl}/customers`);
   }
 
+  updateCustomerPhone(id: string, phone: string): Observable<Customer> {
+    return this.http.patch<Customer>(`${this.apiUrl}/customers/${id}/phone`, { phone });
+  }
+
   getStats(): Observable<AdminStats> {
     return this.http.get<AdminStats>(`${this.apiUrl}/stats`);
+  }
+
+  getProductRequests(status?: ProductRequestStatus | ''): Observable<ProductRequestResponse[]> {
+    return status
+      ? this.http.get<ProductRequestResponse[]>(`${this.apiUrl}/product-requests`, { params: { status } })
+      : this.http.get<ProductRequestResponse[]>(`${this.apiUrl}/product-requests`);
+  }
+
+  approveProductRequest(id: number): Observable<ProductRequestResponse> {
+    return this.http.patch<ProductRequestResponse>(`${this.apiUrl}/product-requests/${id}/approve`, {});
+  }
+
+  rejectProductRequest(id: number): Observable<ProductRequestResponse> {
+    return this.http.patch<ProductRequestResponse>(`${this.apiUrl}/product-requests/${id}/reject`, {});
   }
 }

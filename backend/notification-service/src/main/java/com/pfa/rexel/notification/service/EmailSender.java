@@ -4,6 +4,7 @@ import com.pfa.rexel.notification.entity.Notification;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -14,8 +15,12 @@ import org.springframework.stereotype.Service;
 public class EmailSender {
 
     private static final Logger log = LoggerFactory.getLogger(EmailSender.class);
+    private static final String ADMIN_EMAIL = "moomaataoui@gmail.com";
 
     private final JavaMailSender mailSender;
+
+    @Value("${spring.mail.username}")
+    private String smtpUsername;
 
     /**
      * @return null si l'envoi a reussi, sinon la raison de l'echec
@@ -29,6 +34,8 @@ public class EmailSender {
 
         SimpleMailMessage message = new SimpleMailMessage();
         message.setTo(notification.getRecipientEmail());
+        message.setFrom("Admin Rexel Mini Store <" + smtpUsername + ">");
+        message.setReplyTo(ADMIN_EMAIL);
         message.setSubject(notification.getTitle());
         message.setText(notification.getMessage());
 
