@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rexel-mini-store
+spec:
+  replicas: 1
+  selector:
+    matchLabels: { app: rexel-mini-store }
+  template:
+    metadata:
+      labels: { app: rexel-mini-store }
+    spec:
+      containers:
+        - name: rexel-mini-store
+          image: rexel-mini-store:latest
+          imagePullPolicy: IfNotPresent
+          ports: [{ containerPort: 8081 }]
+          env:
+            - { name: DB_URL, value: "jdbc:postgresql://postgres:5432/rexel_store" }
+            - { name: KAFKA_BOOTSTRAP_SERVERS, value: "kafka:9092" }
+            - { name: SPRING_SECURITY_OAUTH2_RESOURCESERVER_JWT_JWKSETURI, value: "http://keycloak:8080/realms/rexel-realm/protocol/openid-connect/certs" }
+            - { name: KEYCLOAK_SERVER_URL, value: "http://keycloak:8080" }
+            - name: KEYCLOAK_ADMIN_CLIENT_SECRET
+              valueFrom: { secretKeyRef: { name: pfa-secrets, key: KEYCLOAK_ADMIN_CLIENT_SECRET } }
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rexel-mini-store
+spec:
+  selector: { app: rexel-mini-store }
+  ports: [{ port: 8081 }]
