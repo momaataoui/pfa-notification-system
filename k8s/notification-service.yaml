@@ -23,6 +23,10 @@ spec:
               valueFrom: { secretKeyRef: { name: pfa-secrets, key: GMAIL_USERNAME } }
             - name: GMAIL_APP_PASSWORD
               valueFrom: { secretKeyRef: { name: pfa-secrets, key: GMAIL_APP_PASSWORD } }
+            - name: VONAGE_API_KEY
+              valueFrom: { secretKeyRef: { name: pfa-secrets, key: VONAGE_API_KEY } }
+            - name: VONAGE_API_SECRET
+              valueFrom: { secretKeyRef: { name: pfa-secrets, key: VONAGE_API_SECRET } }
 ---
 apiVersion: v1
 kind: Service

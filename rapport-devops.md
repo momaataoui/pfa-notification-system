@@ -33,12 +33,14 @@ Un `Dockerfile` multi-stage pour chacun des 3 composants applicatifs (l'infra �
 
 Une fois le Compose validé, transposition en manifests K8s : un `Deployment` + `Service` par composant, un `ConfigMap` pour la configuration non sensible, et un `Secret` pour les identifiants Gmail (`GMAIL_APP_PASSWORD`) et le mot de passe admin Keycloak — jamais en clair dans les manifests versionnés. Testable en local via le Kubernetes intégré à Docker Desktop (`kubectl apply -f k8s/`), sans besoin de cluster cloud.
 
-**✅ Statut (2026-08-10) : manifests écrits, pas encore testés.** 7 fichiers dans `k8s/` : `secret.yaml`, `postgres.yaml`, `kafka.yaml`, `keycloak.yaml`, `notification-service.yaml`, `rexel-mini-store.yaml`, `frontend.yaml` (Deployment + Service regroupés par fichier). Deux simplifications assumées par rapport à Compose :
+**✅ Statut (2026-08-22) : terminée et testée.** 7 fichiers dans `k8s/` : `secret.yaml`, `postgres.yaml`, `kafka.yaml`, `keycloak.yaml`, `notification-service.yaml`, `rexel-mini-store.yaml`, `frontend.yaml` (Deployment + Service regroupés par fichier). Deux simplifications assumées par rapport à Compose :
 - **Thème de login Keycloak custom non repris** (nécessiterait un `ConfigMap` par fichier de thème, fragile pour une arborescence) — thème par défaut de Keycloak utilisé dans ce manifest.
 - **Kafka simplifié à un seul listener** (`kafka:9092`) — en K8s, contrairement à Compose, aucun backend ne tourne "sur l'hôte", donc plus besoin du double listener.
 - Accès local prévu via `kubectl port-forward` (pas de `NodePort`) — le frontend Angular appelle les backends sur des ports fixes (`8080`/`8081`) codés en dur, incompatibles avec la plage `NodePort` (30000-32767) de Kubernetes.
 
-Non testé : Kubernetes n'est pas activé dans Docker Desktop sur la machine de développement (`kubectl` installé mais aucun cluster actif). À tester plus tard si le temps le permet.
+**Test réalisé** : Kubernetes activé dans Docker Desktop (cluster `docker-desktop`, kubeadm, 1 nœud). Images taguées pour correspondre aux manifests (`notification-service:latest`, `rexel-mini-store:latest`, `rexel-frontend:latest`), Secret créé avec les vraies valeurs via `kubectl create secret` (jamais commitées), déploiement de tous les manifests avec `kubectl apply -f k8s/`. **Les 6 pods démarrent et passent `Running` (1/1 Ready)** sans erreur : Postgres, Kafka, Keycloak, `notification-service`, `rexel-mini-store`, `frontend`. Connectivité vérifiée via `kubectl port-forward` : catalogue produits réel (`rexel-mini-store`), Swagger UI (`notification-service`), page d'accueil (`frontend`) — tous répondent `200`.
+
+**Limite assumée** : le realm Keycloak (`rexel-realm`, comptes, clients) n'a pas été recréé dans ce cluster K8s isolé (base de données Postgres distincte de celle de Docker Compose) — seul le realm `master` par défaut existe. Le test valide donc le **déploiement et le démarrage** de l'architecture complète, pas un scénario métier de bout en bout comme celui déjà validé sous Docker Compose (section 3).
 
 ## 5. Étape D — CI/CD (GitHub Actions)
 
