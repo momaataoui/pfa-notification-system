@@ -38,6 +38,7 @@ public class AdminNotificationController {
                 aggregateId,
                 request.getRecipientType(),
                 request.getRecipientType() == RecipientType.USER ? request.getRecipientEmail() : null,
+                request.getRecipientType() == RecipientType.USER ? request.getRecipientPhone() : null,
                 request.getTitle(),
                 request.getMessage(),
                 request.getChannels(),

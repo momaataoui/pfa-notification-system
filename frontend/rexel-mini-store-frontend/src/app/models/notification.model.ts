@@ -41,6 +41,7 @@ export interface NotificationStatsResponse {
 export interface AdminNotificationRequest {
   recipientType: NotificationRecipientType;
   recipientEmail: string | null;
+  recipientPhone: string | null;
   priority: NotificationPriority;
   channels: NotificationChannel[];
   title: string;

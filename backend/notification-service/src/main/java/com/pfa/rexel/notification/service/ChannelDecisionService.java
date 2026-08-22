@@ -16,8 +16,9 @@ public class ChannelDecisionService {
     // par ChannelDecisionService (donc uniquement le chemin Kafka).
     public Set<Channel> decideChannels(String type, String urgency) {
         return switch (type) {
-            case "ORDER_CREATED", "ORDER_SHIPPED", "ORDER_DELIVERED",
-                 "PRODUCT_REQUEST_CREATED", "PRODUCT_REQUEST_APPROVED", "PRODUCT_REQUEST_REJECTED" ->
+            case "ORDER_CREATED", "ORDER_SHIPPED", "ORDER_DELIVERED" ->
+                    new HashSet<>(Set.of(Channel.PUSH, Channel.EMAIL, Channel.SMS));
+            case "PRODUCT_REQUEST_CREATED", "PRODUCT_REQUEST_APPROVED", "PRODUCT_REQUEST_REJECTED" ->
                     new HashSet<>(Set.of(Channel.PUSH, Channel.EMAIL));
             case "ORDER_CANCELLED", "ADMIN_NEW_ORDER" -> new HashSet<>(Set.of(Channel.PUSH));
             case "LOW_STOCK_ALERT" -> new HashSet<>(Set.of(Channel.EMAIL));

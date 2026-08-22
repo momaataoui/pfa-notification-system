@@ -8,6 +8,7 @@ import com.pfa.rexel.notification.entity.Notification;
 import com.pfa.rexel.notification.repository.NotificationRepository;
 import com.pfa.rexel.notification.service.EmailSender;
 import com.pfa.rexel.notification.service.PushNotificationSender;
+import com.pfa.rexel.notification.service.SmsSender;
 import lombok.RequiredArgsConstructor;
 import org.axonframework.config.ProcessingGroup;
 import org.axonframework.eventhandling.EventHandler;
@@ -29,6 +30,7 @@ public class NotificationProjection {
     private final NotificationRepository notificationRepository;
     private final PushNotificationSender pushNotificationSender;
     private final EmailSender emailSender;
+    private final SmsSender smsSender;
 
     @EventHandler
     public void on(NotificationCreatedEvent event) {
@@ -36,6 +38,7 @@ public class NotificationProjection {
         notification.setAggregateId(event.getAggregateId());
         notification.setRecipientType(event.getRecipientType());
         notification.setRecipientEmail(event.getRecipientEmail());
+        notification.setRecipientPhone(event.getRecipientPhone());
         notification.setTitle(event.getTitle());
         notification.setMessage(event.getMessage());
         notification.setChannels(event.getChannels());
@@ -74,6 +77,14 @@ public class NotificationProjection {
         if (saved.getChannels().contains(Channel.EMAIL)) {
             anyAttempted = true;
             String reason = emailSender.send(saved);
+            if (reason != null) {
+                failureReason = reason;
+            }
+        }
+
+        if (saved.getChannels().contains(Channel.SMS)) {
+            anyAttempted = true;
+            String reason = smsSender.send(saved);
             if (reason != null) {
                 failureReason = reason;
             }

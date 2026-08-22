@@ -24,6 +24,9 @@
     <span *ngIf="form.controls.recipientEmail.invalid && form.controls.recipientEmail.touched" class="text-xs text-red-600 dark:text-red-400">
       Selectionne un client.
     </span>
+    <span *ngIf="smsChecked && form.controls.recipientEmail.value" class="mt-1 block text-xs" [ngClass]="selectedCustomerPhone ? 'text-gray-500 dark:text-neutral-500' : 'text-red-600 dark:text-red-400'">
+      {{ selectedCustomerPhone ? 'SMS envoye au ' + selectedCustomerPhone : 'Ce client n\'a pas de numero de telephone renseigne - le SMS echouera.' }}
+    </span>
   </label>
 
   <label class="text-sm text-gray-600 dark:text-neutral-400">

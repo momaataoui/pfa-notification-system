@@ -19,6 +19,7 @@ public class NotificationCreatedEvent {
     private final String aggregateId;
     private final RecipientType recipientType;
     private final String recipientEmail;
+    private final String recipientPhone;
     private final String title;
     private final String message;
     private final Set<Channel> channels;

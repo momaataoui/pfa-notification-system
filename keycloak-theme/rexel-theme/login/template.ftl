@@ -89,8 +89,18 @@
     <main class="pf-v5-c-login__main">
       <header class="pf-v5-c-login__main-header">
         <div class="rexel-logo-badge" aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" width="24" height="24">
-            <path d="M13 2 3 14h7l-1 8 10-12h-7l1-8z" fill="currentColor"/>
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg" width="60" height="60">
+            <defs>
+              <clipPath id="rexelLogoClip">
+                <rect x="0" y="0" width="100" height="100" rx="18"/>
+              </clipPath>
+            </defs>
+            <rect x="0" y="0" width="100" height="100" rx="18" fill="#ffffff"/>
+            <g clip-path="url(#rexelLogoClip)">
+              <rect x="0" y="0" width="100" height="58" fill="#0f2a66"/>
+              <rect x="0" y="64" width="100" height="36" fill="#4a82c4"/>
+              <text x="50" y="37" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="800" font-size="21" letter-spacing="0.5" fill="#ffffff">REXEL</text>
+            </g>
           </svg>
         </div>
         <div class="rexel-header-text"><#nested "header"></div>

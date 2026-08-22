@@ -30,7 +30,7 @@ public class NotificationService {
     private final NotificationRepository notificationRepository;
 
     public List<Notification> findForUser(String email) {
-        return notificationRepository.findByRecipientEmailOrRecipientType(email, RecipientType.BROADCAST);
+        return notificationRepository.findByRecipientEmailOrRecipientTypeOrderByCreatedAtDesc(email, RecipientType.BROADCAST);
     }
 
     public List<Notification> findAll() {

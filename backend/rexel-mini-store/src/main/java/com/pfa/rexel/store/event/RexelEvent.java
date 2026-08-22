@@ -13,4 +13,5 @@ public class RexelEvent {
     private String message;
     private String type;
     private String urgency;
+    private String phone;
 }

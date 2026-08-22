@@ -28,6 +28,7 @@ public class NotificationEventListener {
                 UUID.randomUUID().toString(),
                 RecipientType.USER,
                 event.getUserId(),
+                event.getPhone(),
                 humanizeTitle(event.getType()),
                 event.getMessage(),
                 channels,

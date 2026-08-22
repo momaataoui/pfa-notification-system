@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
-    List<Notification> findByRecipientEmailOrRecipientType(String recipientEmail, RecipientType recipientType);
+    List<Notification> findByRecipientEmailOrRecipientTypeOrderByCreatedAtDesc(String recipientEmail, RecipientType recipientType);
 
     List<Notification> findAllByOrderByCreatedAtDesc();
 

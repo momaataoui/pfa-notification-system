@@ -14,7 +14,11 @@ public class KafkaEventPublisher {
     private final KafkaTemplate<String, RexelEvent> kafkaTemplate;
 
     public void publish(String userId, String message, String type, String urgency) {
-        RexelEvent event = new RexelEvent(userId, message, type, urgency);
+        publish(userId, message, type, urgency, null);
+    }
+
+    public void publish(String userId, String message, String type, String urgency, String phone) {
+        RexelEvent event = new RexelEvent(userId, message, type, urgency, phone);
         kafkaTemplate.send(TOPIC, event);
     }
 }

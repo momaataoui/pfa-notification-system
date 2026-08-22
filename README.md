@@ -1,4 +1,4 @@
-# Rexel Mini Store — Plateforme de Notification Multi-Canal
+# Rexel Store — Plateforme de Notification Multi-Canal
 
 Projet de Fin d'Année (PFA) — Génie informatique. Système de notification événementiel (Push / Email / SMS) branché sur un mini e-commerce B2B : Spring Boot, Kafka, Axon Framework (CQRS), Keycloak, Angular.
 

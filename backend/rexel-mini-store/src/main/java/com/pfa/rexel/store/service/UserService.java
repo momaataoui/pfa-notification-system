@@ -43,6 +43,17 @@ public class UserService {
         return toResponse(user, jwt);
     }
 
+    public String findPhoneByEmail(String email) {
+        List<UserRepresentation> matches = keycloakAdminClient.realm(realm).users().searchByEmail(email, true);
+        if (matches.isEmpty()) {
+            return null;
+        }
+        Map<String, List<String>> attributes = matches.get(0).getAttributes();
+        return attributes != null && attributes.containsKey("phone")
+                ? attributes.get("phone").get(0)
+                : null;
+    }
+
     private UserRepresentation fetchUser(String keycloakUserId) {
         try {
             return keycloakAdminClient.realm(realm).users().get(keycloakUserId).toRepresentation();

@@ -28,6 +28,7 @@ public class OrderService {
     private final ProductRepository productRepository;
     private final OrderRepository orderRepository;
     private final KafkaEventPublisher kafkaEventPublisher;
+    private final UserService userService;
 
     @Transactional
     public Order placeOrder(OrderRequest request) {
@@ -52,12 +53,14 @@ public class OrderService {
         order.setCreatedAt(LocalDateTime.now());
 
         Order saved = orderRepository.save(order);
+        String customerPhone = userService.findPhoneByEmail(saved.getCustomerEmail());
 
         kafkaEventPublisher.publish(
                 saved.getCustomerEmail(),
                 "Commande #" + saved.getId() + " enregistree pour " + product.getName(),
                 "ORDER_CREATED",
-                "normal"
+                "normal",
+                customerPhone
         );
 
         kafkaEventPublisher.publish(
@@ -130,7 +133,10 @@ public class OrderService {
         };
 
         if (eventType != null) {
-            kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " : " + eventType, eventType, "normal");
+            String customerPhone = (status == OrderStatus.SHIPPED || status == OrderStatus.DELIVERED)
+                    ? userService.findPhoneByEmail(saved.getCustomerEmail())
+                    : null;
+            kafkaEventPublisher.publish(saved.getCustomerEmail(), "Commande #" + saved.getId() + " : " + eventType, eventType, "normal", customerPhone);
         }
 
         return saved;

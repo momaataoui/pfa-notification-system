@@ -56,6 +56,15 @@ export class AdminNotificationsComponent implements OnInit {
     return this.form.controls.recipientType.value === 'USER';
   }
 
+  get selectedCustomerPhone(): string | null {
+    const email = this.form.controls.recipientEmail.value;
+    return this.customers.find(c => c.email === email)?.phone ?? null;
+  }
+
+  get smsChecked(): boolean {
+    return !!this.form.controls.channels.value.SMS;
+  }
+
   submit(): void {
     if (this.isUserRecipient) {
       this.form.controls.recipientEmail.addValidators(Validators.required);
@@ -72,11 +81,13 @@ export class AdminNotificationsComponent implements OnInit {
     }
 
     const raw = this.form.getRawValue();
+    const selectedCustomer = this.customers.find(c => c.email === raw.recipientEmail);
 
     this.sending = true;
     this.notificationStore.sendManual({
       recipientType: raw.recipientType!,
       recipientEmail: raw.recipientType === 'USER' ? raw.recipientEmail || null : null,
+      recipientPhone: raw.recipientType === 'USER' ? selectedCustomer?.phone ?? null : null,
       priority: raw.priority!,
       channels: selectedChannels,
       title: raw.title!,

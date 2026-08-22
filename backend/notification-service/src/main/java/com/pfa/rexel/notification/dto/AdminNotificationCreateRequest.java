@@ -18,6 +18,8 @@ public class AdminNotificationCreateRequest {
 
     private String recipientEmail; // rempli seulement si recipientType == USER
 
+    private String recipientPhone; // rempli seulement si le canal SMS est coche
+
     @NotNull
     private Priority priority;
 

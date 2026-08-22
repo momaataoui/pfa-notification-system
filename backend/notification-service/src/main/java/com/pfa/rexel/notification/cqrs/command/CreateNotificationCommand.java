@@ -21,6 +21,7 @@ public class CreateNotificationCommand {
 
     private final RecipientType recipientType;
     private final String recipientEmail;
+    private final String recipientPhone;   // pour le canal SMS, nullable
     private final String title;
     private final String message;
     private final Set<Channel> channels;

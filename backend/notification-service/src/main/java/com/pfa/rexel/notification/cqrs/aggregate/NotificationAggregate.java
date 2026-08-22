@@ -39,6 +39,7 @@ public class NotificationAggregate {
                 command.getAggregateId(),
                 command.getRecipientType(),
                 command.getRecipientEmail(),
+                command.getRecipientPhone(),
                 command.getTitle(),
                 command.getMessage(),
                 command.getChannels(),

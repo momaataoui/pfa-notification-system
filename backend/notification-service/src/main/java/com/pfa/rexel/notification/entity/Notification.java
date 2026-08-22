@@ -41,6 +41,8 @@ public class Notification {
 
     private String recipientEmail;         // email du destinataire (simple texte)
 
+    private String recipientPhone;         // numero de telephone (canal SMS), nullable
+
     // ===== Contenu =====
     // Ce que la notification affiche
 

@@ -47,6 +47,11 @@ spring:
       mail.smtp.auth: true
       mail.smtp.starttls.enable: true
 
+vonage:
+  api-key: ${VONAGE_API_KEY:}
+  api-secret: ${VONAGE_API_SECRET:}
+  from: ${VONAGE_FROM:RexelStore}
+
 # Sans ceci, axon-spring-boot-starter essaie par defaut de se connecter a un
 # serveur Axon Server distant (localhost:8124) pour router les commandes et
 # stocker les events. On ne veut pas de serveur separe (decision actee) :
